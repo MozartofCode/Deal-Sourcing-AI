@@ -90,40 +90,25 @@ Once the backend is running:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-## Deployment
+## 🚀 Deployment (FREE with Auto-Deploy!)
 
-### Frontend (Vercel)
+**Want to deploy for FREE with automatic updates?** Check out the comprehensive guide:
 
-1. Push your code to GitHub
-2. Go to [Vercel](https://vercel.com) and import your repository
-3. Set build settings:
-   - Framework Preset: Vite
-   - Root Directory: `frontend`
-   - Build Command: `npm run build`
-   - Output Directory: `dist`
-4. Add environment variable:
-   - `VITE_API_URL` = your backend URL (e.g., `https://your-backend.railway.app`)
-5. Deploy!
+👉 **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Step-by-step instructions for free deployment
 
-### Backend (Railway / Render)
+### Quick Summary:
+- **Frontend**: Deploy to [Vercel](https://vercel.com) (free, auto-deploys on push)
+- **Backend**: Deploy to [Render.com](https://render.com) (free tier, auto-deploys on push)
+- **Secrets**: Store your OpenAI key securely in platform environment variables (never in code!)
+- **Auto-Deploy**: Every `git push` automatically deploys your changes
 
-#### Railway:
-1. Go to [Railway](https://railway.app) and create a new project
-2. Connect your GitHub repository
-3. Add a new service and select your backend directory
-4. Add environment variables:
-   - `OPENAI_API_KEY` = your OpenAI API key
-   - `ALLOWED_ORIGINS` = your frontend URL (e.g., `https://your-frontend.vercel.app`)
-5. Deploy!
+### Why This Setup?
+- ✅ **100% Free** (within generous limits)
+- ✅ **Automatic deployments** on every push to GitHub
+- ✅ **Secure** - API keys stored in platform secrets, never in code
+- ✅ **Easy** - No credit card required, simple setup
 
-#### Render (Alternative):
-1. Go to [Render](https://render.com) and create a new Web Service
-2. Connect your GitHub repository
-3. Set:
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-4. Add environment variables (same as Railway)
-5. Deploy!
+See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions!
 
 ## Environment Variables
 

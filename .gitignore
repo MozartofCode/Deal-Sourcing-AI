@@ -18,10 +18,12 @@ Desktop.ini
 .classpath
 .settings/
 
-# Environment variables
+# Environment variables - NEVER COMMIT THESE!
 .env
 .env.local
 .env.*.local
+.env.production
+.env.development
 
 # Python (root level)
 __pycache__/
@@ -39,3 +41,5 @@ logs/
 *.temp
 .cache/
 
+# Node modules (if any at root)
+node_modules/
