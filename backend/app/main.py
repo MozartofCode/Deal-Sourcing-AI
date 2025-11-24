@@ -10,10 +10,11 @@ load_dotenv()
 app = FastAPI(title="Deal Sourcing AI API", version="1.0.0")
 
 # Get allowed origins from environment or use defaults
-allowed_origins = os.getenv(
+allowed_origins_str = os.getenv(
     "ALLOWED_ORIGINS",
-    "http://localhost:3000,http://127.0.0.1:3000"
-).split(",")
+    "http://localhost:3000,http://127.0.0.1:3000,https://deal-sourcing-ai.vercel.app"
+)
+allowed_origins = [origin.strip() for origin in allowed_origins_str.split(",")]
 
 # Configure CORS
 app.add_middleware(
