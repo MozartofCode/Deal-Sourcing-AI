@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import chat, history
 import os
@@ -28,16 +28,27 @@ if production_frontend not in allowed_origins:
 # Log configured origins for debugging
 logger.info(f"CORS allowed origins: {allowed_origins}")
 
-# Configure CORS - must be added before routes
+# Configure CORS - must be added before routes and other middleware
+# Using allow_origin_regex for more flexible matching
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
-    allow_headers=["*"],
+    allow_origin_regex=r"https://.*\.vercel\.app",  # Allow all Vercel subdomains
+    allow_credentials=False,  # Set to False - we don't need credentials for this API
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
     expose_headers=["*"],
     max_age=3600,
 )
+
+# Add middleware to log incoming requests for debugging (runs after CORS)
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    origin = request.headers.get("origin")
+    if origin:
+        logger.info(f"Request from origin: {origin}, path: {request.url.path}, method: {request.method}")
+    response = await call_next(request)
+    return response
 
 # Include routers
 app.include_router(chat.router, prefix="/api", tags=["chat"])
