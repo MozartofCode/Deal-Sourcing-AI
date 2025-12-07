@@ -8,22 +8,22 @@ function Sidebar({ conversations, currentConversationId, onNewConversation, onSe
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-30 z-40 lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <div
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform transition-transform duration-300 ease-in-out ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-blue-100 text-gray-900 transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 flex flex-col`}
+        } lg:translate-x-0 flex flex-col shadow-sm`}
       >
         {/* Header */}
-        <div className="p-4 border-b border-gray-700 flex items-center justify-between">
+        <div className="p-4 border-b border-blue-100 flex items-center justify-between">
           <button
             onClick={onNewConversation}
-            className="flex items-center gap-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors w-full"
+            className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors w-full"
           >
             <svg
               className="w-5 h-5"
@@ -42,7 +42,7 @@ function Sidebar({ conversations, currentConversationId, onNewConversation, onSe
           </button>
           <button
             onClick={() => setIsOpen(false)}
-            className="lg:hidden ml-2 p-2 hover:bg-gray-700 rounded"
+            className="lg:hidden ml-2 p-2 hover:bg-blue-50 rounded text-gray-700"
           >
             <svg
               className="w-6 h-6"
@@ -63,7 +63,7 @@ function Sidebar({ conversations, currentConversationId, onNewConversation, onSe
         {/* Conversation List */}
         <div className="flex-1 overflow-y-auto p-2">
           {conversations.length === 0 ? (
-            <div className="text-gray-400 text-sm p-4 text-center">
+            <div className="text-gray-500 text-sm p-4 text-center">
               No conversations yet. Start a new chat!
             </div>
           ) : (
@@ -77,13 +77,13 @@ function Sidebar({ conversations, currentConversationId, onNewConversation, onSe
                   }}
                   className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                     currentConversationId === conversation.id
-                      ? 'bg-gray-700'
-                      : 'hover:bg-gray-800'
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'hover:bg-blue-50 text-gray-700'
                   }`}
                 >
-                  <div className="truncate text-sm">{conversation.title}</div>
+                  <div className="truncate text-sm font-medium">{conversation.title}</div>
                   {conversation.updated_at && (
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs text-gray-500 mt-1">
                       {new Date(conversation.updated_at).toLocaleDateString()}
                     </div>
                   )}
@@ -97,7 +97,7 @@ function Sidebar({ conversations, currentConversationId, onNewConversation, onSe
       {/* Mobile menu button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-30 p-2 bg-gray-900 text-white rounded-lg"
+        className="lg:hidden fixed top-20 left-4 z-30 p-2 bg-white border border-blue-200 text-gray-700 rounded-lg shadow-sm"
       >
         <svg
           className="w-6 h-6"

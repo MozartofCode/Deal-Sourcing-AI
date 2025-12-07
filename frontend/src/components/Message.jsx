@@ -10,7 +10,7 @@ function Message({ message }) {
             ? 'bg-blue-600 text-white'
             : isError
             ? 'bg-red-50 text-red-800 border border-red-200'
-            : 'bg-gray-100 text-gray-800'
+            : 'bg-white text-gray-800 border border-blue-100 shadow-sm'
         }`}
       >
         <div className="whitespace-pre-wrap break-words">{message.content}</div>

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
-from app.routes import chat, history
+from app.routes import chat, history, startups
 import os
 import logging
 from dotenv import load_dotenv
@@ -13,7 +13,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Deal Sourcing AI API", version="1.0.0")
+app = FastAPI(title="Laguna AI API", version="1.0.0")
 
 # Define allowed origins - always include production frontend
 allowed_origins = [
@@ -79,6 +79,7 @@ async def add_cors_headers(request: Request, call_next):
 # Include routers
 app.include_router(chat.router, prefix="/api", tags=["chat"])
 app.include_router(history.router, prefix="/api", tags=["history"])
+app.include_router(startups.router, prefix="/api", tags=["startups"])
 
 
 @app.get("/health")

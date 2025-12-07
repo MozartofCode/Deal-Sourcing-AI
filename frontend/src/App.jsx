@@ -1,54 +1,27 @@
-import { useState, useEffect } from 'react'
-import Sidebar from './components/Sidebar'
-import ChatInterface from './components/ChatInterface'
-import { getHistory } from './services/api'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Navigation from './components/Navigation'
+import Home from './pages/Home'
+import DiscoverStartups from './pages/DiscoverStartups'
+import Portfolio from './pages/Portfolio'
+import StartupAnalysis from './pages/StartupAnalysis'
+import Search from './pages/Search'
+import Chat from './pages/Chat'
 
 function App() {
-  const [conversations, setConversations] = useState([])
-  const [currentConversationId, setCurrentConversationId] = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    loadHistory()
-  }, [])
-
-  const loadHistory = async () => {
-    try {
-      const history = await getHistory()
-      setConversations(history)
-      if (history.length > 0 && !currentConversationId) {
-        setCurrentConversationId(history[0].id)
-      }
-    } catch (error) {
-      console.error('Failed to load history:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleNewConversation = () => {
-    setCurrentConversationId(null)
-  }
-
-  const handleSelectConversation = (id) => {
-    setCurrentConversationId(id)
-  }
-
   return (
-    <div className="flex h-screen bg-gray-50">
-      <Sidebar
-        conversations={conversations}
-        currentConversationId={currentConversationId}
-        onNewConversation={handleNewConversation}
-        onSelectConversation={handleSelectConversation}
-        onHistoryUpdate={loadHistory}
-      />
-      <ChatInterface
-        conversationId={currentConversationId}
-        onNewConversation={handleNewConversation}
-        onHistoryUpdate={loadHistory}
-      />
-    </div>
+    <Router>
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/discover" element={<DiscoverStartups />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/analysis" element={<StartupAnalysis />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/chat" element={<Chat />} />
+        </Routes>
+      </div>
+    </Router>
   )
 }
 

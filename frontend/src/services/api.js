@@ -34,5 +34,30 @@ export const healthCheck = async () => {
   return response.data
 }
 
+export const discoverStartups = async (query, industry = null, stage = null) => {
+  const response = await api.post('/api/discover', {
+    query,
+    industry: industry === 'all' ? null : industry,
+    stage: stage === 'all' ? null : stage,
+  })
+  return response.data
+}
+
+export const analyzeStartup = async (startupName, analysisType = 'comprehensive') => {
+  const response = await api.post('/api/analyze', {
+    startup_name: startupName,
+    analysis_type: analysisType,
+  })
+  return response.data
+}
+
+export const search = async (query, searchType = 'all') => {
+  const response = await api.post('/api/search', {
+    query,
+    search_type: searchType,
+  })
+  return response.data
+}
+
 export default api
 

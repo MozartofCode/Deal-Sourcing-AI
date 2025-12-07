@@ -39,7 +39,7 @@ function SearchBar({ onSendMessage, isLoading }) {
           onKeyDown={handleKeyDown}
           placeholder="Type your message..."
           rows={1}
-          className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none max-h-32 overflow-y-auto"
+          className="w-full px-4 py-3 pr-12 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none max-h-32 overflow-y-auto"
           disabled={isLoading}
         />
         <button
