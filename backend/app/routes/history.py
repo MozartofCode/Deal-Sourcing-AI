@@ -1,60 +1,107 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional, List
 from datetime import datetime
+from app.database import get_supabase_client
+from app.services.auth_service import decode_access_token
 
 router = APIRouter()
+security = HTTPBearer()
 
 
 class Conversation(BaseModel):
     id: str
     title: str
     created_at: str
-    updated_at: Optional[str] = None
+    updated_at: str
 
 
 class CreateConversationRequest(BaseModel):
     title: Optional[str] = None
 
 
-# Mock data storage (replace with database later)
-mock_conversations = [
-    {
-        "id": "conv_1",
-        "title": "Sample Conversation 1",
-        "created_at": "2024-01-15T10:00:00Z",
-        "updated_at": "2024-01-15T10:30:00Z"
-    },
-    {
-        "id": "conv_2",
-        "title": "Sample Conversation 2",
-        "created_at": "2024-01-14T14:00:00Z",
-        "updated_at": "2024-01-14T15:00:00Z"
-    }
-]
+def get_user_id_from_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+    """Extract user ID from JWT token"""
+    token = credentials.credentials
+    payload = decode_access_token(token)
+    
+    if payload is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication credentials"
+        )
+    
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication credentials"
+        )
+    
+    return user_id
 
 
 @router.get("/history", response_model=List[Conversation])
-async def get_history():
+async def get_history(user_id: str = Depends(get_user_id_from_token)):
     """
-    Get conversation history - returns mock data for now
+    Get conversation history for the authenticated user
     """
-    return mock_conversations
+    supabase = get_supabase_client()
+    
+    try:
+        response = supabase.table("conversations").select("*").eq("user_id", user_id).order("updated_at", desc=True).execute()
+        
+        conversations = []
+        if response.data:
+            for item in response.data:
+                conversations.append(Conversation(
+                    id=item["id"],
+                    title=item["title"],
+                    created_at=item["created_at"],
+                    updated_at=item["updated_at"]
+                ))
+        
+        return conversations
+    except Exception as e:
+        print(f"Error fetching conversation history: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch conversation history")
 
 
 @router.post("/history", response_model=Conversation)
-async def create_conversation(request: CreateConversationRequest):
+async def create_conversation(
+    request: CreateConversationRequest,
+    user_id: str = Depends(get_user_id_from_token)
+):
     """
-    Create a new conversation - placeholder implementation
+    Create a new conversation
     """
-    now = datetime.utcnow().isoformat() + "Z"
-    new_conversation = {
-        "id": f"conv_{len(mock_conversations) + 1}",
-        "title": request.title or f"New Conversation {len(mock_conversations) + 1}",
-        "created_at": now,
-        "updated_at": now
-    }
+    supabase = get_supabase_client()
     
-    mock_conversations.append(new_conversation)
-    return new_conversation
-
+    try:
+        title = request.title or f"Conversation {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}"
+        
+        conversation_data = {
+            "user_id": user_id,
+            "title": title,
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat()
+        }
+        
+        response = supabase.table("conversations").insert(conversation_data).execute()
+        
+        if response.data and len(response.data) > 0:
+            item = response.data[0]
+            return Conversation(
+                id=item["id"],
+                title=item["title"],
+                created_at=item["created_at"],
+                updated_at=item["updated_at"]
+            )
+        else:
+            raise HTTPException(status_code=500, detail="Failed to create conversation")
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error creating conversation: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create conversation")

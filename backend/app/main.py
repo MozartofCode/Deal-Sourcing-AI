@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
-from app.routes import chat, history, startups
+from app.routes import chat, history, startups, auth, portfolio
 import os
 import logging
 from dotenv import load_dotenv
@@ -77,6 +77,8 @@ async def add_cors_headers(request: Request, call_next):
     return response
 
 # Include routers
+app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
+app.include_router(portfolio.router, prefix="/api/portfolio", tags=["portfolio"])
 app.include_router(chat.router, prefix="/api", tags=["chat"])
 app.include_router(history.router, prefix="/api", tags=["history"])
 app.include_router(startups.router, prefix="/api", tags=["startups"])

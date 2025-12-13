@@ -1,7 +1,17 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from './AuthContext'
+import { logout } from '../services/api'
 
 function Navigation() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user, setUser } = useAuth()
+
+  const handleLogout = () => {
+    logout()
+    setUser(null)
+    navigate('/login')
+  }
 
   const isActive = (path) => {
     return location.pathname === path
@@ -81,6 +91,24 @@ function Navigation() {
             >
               AI Assistant
             </Link>
+            {user ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-700">{user.name || user.email}</span>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+              >
+                Login
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -163,21 +191,41 @@ function Navigation() {
           >
             Search
           </Link>
-          <Link
-            to="/chat"
-            className={`block px-3 py-2 rounded-lg text-base font-medium ${
-              isActive('/chat')
-                ? 'bg-blue-50 text-blue-600'
-                : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
-            }`}
-          >
-            AI Assistant
-          </Link>
+            <Link
+              to="/chat"
+              className={`block px-3 py-2 rounded-lg text-base font-medium ${
+                isActive('/chat')
+                  ? 'bg-blue-50 text-blue-600'
+                  : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+              }`}
+            >
+              AI Assistant
+            </Link>
+            {user ? (
+              <>
+                <div className="px-3 py-2 text-sm text-gray-700 border-t border-blue-100 mt-2 pt-2">
+                  {user.name || user.email}
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                className="block px-3 py-2 bg-blue-600 text-white rounded-lg text-base font-medium hover:bg-blue-700 text-center mt-2"
+              >
+                Login
+              </Link>
+            )}
+          </div>
         </div>
-      </div>
-    </nav>
-  )
-}
-
-export default Navigation
+      </nav>
+    )
+  }
+  
+  export default Navigation
 
