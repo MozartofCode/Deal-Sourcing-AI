@@ -62,6 +62,25 @@ ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies (Note: Since we're using service role key in backend, these are optional)
 -- But good to have for direct Supabase client access
+
+-- Drop existing policies if they exist (allows script to be run multiple times)
+DROP POLICY IF EXISTS "Users can view own data" ON users;
+DROP POLICY IF EXISTS "Users can update own data" ON users;
+
+DROP POLICY IF EXISTS "Users can view own portfolios" ON portfolios;
+DROP POLICY IF EXISTS "Users can insert own portfolios" ON portfolios;
+DROP POLICY IF EXISTS "Users can update own portfolios" ON portfolios;
+DROP POLICY IF EXISTS "Users can delete own portfolios" ON portfolios;
+
+DROP POLICY IF EXISTS "Users can view own conversations" ON conversations;
+DROP POLICY IF EXISTS "Users can insert own conversations" ON conversations;
+DROP POLICY IF EXISTS "Users can update own conversations" ON conversations;
+DROP POLICY IF EXISTS "Users can delete own conversations" ON conversations;
+
+DROP POLICY IF EXISTS "Users can view own messages" ON messages;
+DROP POLICY IF EXISTS "Users can insert own messages" ON messages;
+
+-- Create policies
 CREATE POLICY "Users can view own data" ON users FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own data" ON users FOR UPDATE USING (auth.uid() = id);
 
