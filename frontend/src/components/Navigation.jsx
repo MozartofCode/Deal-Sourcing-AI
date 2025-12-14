@@ -23,10 +23,20 @@ function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">L</span>
+            <div className="w-8 h-8 flex items-center justify-center">
+              <svg width="24" height="28" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Left face - darker blue */}
+                <path d="M12 2L2 12L6 16L12 10L18 16L22 12L12 2Z" fill="#1e3a8a"/>
+                {/* Right face - lighter blue */}
+                <path d="M12 2L22 12L18 16L12 10L6 16L2 12L12 2Z" fill="#3b82f6"/>
+                {/* Center highlight */}
+                <path d="M12 4L18 10L12 16L6 10L12 4Z" fill="#60a5fa" opacity="0.6"/>
+                {/* Base */}
+                <rect x="8" y="16" width="8" height="10" fill="#1e3a8a"/>
+                <rect x="9" y="16" width="6" height="10" fill="#3b82f6"/>
+              </svg>
             </div>
-            <span className="text-xl font-bold text-gray-900">Laguna AI</span>
+            <span className="text-xl font-bold text-gray-900" style={{ fontFamily: 'serif' }}>Scout</span>
           </Link>
 
           {/* Navigation Links */}

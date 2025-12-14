@@ -1,4 +1,4 @@
--- Laguna AI Database Schema for Supabase PostgreSQL
+-- Scout Database Schema for Supabase PostgreSQL
 -- Run this SQL in your Supabase SQL Editor to create the tables
 
 -- Enable UUID extension

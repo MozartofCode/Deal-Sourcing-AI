@@ -1,4 +1,4 @@
-# Laguna AI - Complete API & Database Requirements
+# Scout - Complete API & Database Requirements
 
 ## Overview
 This document outlines all APIs and database needs for full functionality without mock data.

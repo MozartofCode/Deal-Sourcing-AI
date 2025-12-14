@@ -45,10 +45,20 @@ function Login() {
       <div className="max-w-md w-full">
         <div className="bg-white rounded-xl shadow-lg border border-blue-100 p-8">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <span className="text-white font-bold text-2xl">L</span>
+            <div className="w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <svg width="48" height="56" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Left face - darker blue */}
+                <path d="M12 2L2 12L6 16L12 10L18 16L22 12L12 2Z" fill="#1e3a8a"/>
+                {/* Right face - lighter blue */}
+                <path d="M12 2L22 12L18 16L12 10L6 16L2 12L12 2Z" fill="#3b82f6"/>
+                {/* Center highlight */}
+                <path d="M12 4L18 10L12 16L6 10L12 4Z" fill="#60a5fa" opacity="0.6"/>
+                {/* Base */}
+                <rect x="8" y="16" width="8" height="10" fill="#1e3a8a"/>
+                <rect x="9" y="16" width="6" height="10" fill="#3b82f6"/>
+              </svg>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Laguna AI</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: 'serif' }}>Scout</h1>
             <p className="text-gray-600">
               {isLogin ? 'Welcome back!' : 'Create your account'}
             </p>

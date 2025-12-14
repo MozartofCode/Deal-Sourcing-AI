@@ -13,7 +13,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Laguna AI API", version="1.0.0")
+app = FastAPI(title="Scout API", version="1.0.0")
 
 # Define allowed origins - always include production frontend
 allowed_origins = [

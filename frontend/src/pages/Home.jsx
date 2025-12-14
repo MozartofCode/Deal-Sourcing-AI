@@ -7,7 +7,7 @@ function Home() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            Welcome to <span className="text-blue-600">Laguna AI</span>
+            Welcome to <span className="text-blue-600" style={{ fontFamily: 'serif' }}>Scout</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Your intelligent platform for startup discovery, analysis, and portfolio management.
