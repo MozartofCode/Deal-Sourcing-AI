@@ -2,11 +2,14 @@
 Authentication service using JWT and password hashing
 """
 import os
+import logging
 from datetime import datetime, timedelta
 from typing import Optional, Tuple
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from app.database import get_supabase_client
+
+logger = logging.getLogger(__name__)
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -122,11 +125,13 @@ async def create_user(email: str, password: str, name: Optional[str] = None) -> 
         return None, "Failed to create user. Please try again."
     except Exception as e:
         error_msg = str(e)
-        print(f"User creation error: {error_msg}")
+        logger.error(f"User creation error for {email}: {error_msg}", exc_info=True)
         # Check for specific database errors
-        if "duplicate" in error_msg.lower() or "unique" in error_msg.lower():
+        if "duplicate" in error_msg.lower() or "unique" in error_msg.lower() or "already exists" in error_msg.lower():
             return None, "Email already registered"
-        return None, f"Database error: {error_msg}"
+        # Don't expose internal database errors to users, but log them
+        logger.error(f"Database error details: {error_msg}")
+        return None, "Failed to create user. Please check your information and try again."
 
 
 async def get_user_by_id(user_id: str) -> Optional[dict]:

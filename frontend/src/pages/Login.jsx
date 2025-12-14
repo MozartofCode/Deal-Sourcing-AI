@@ -34,7 +34,23 @@ function Login() {
       setUser(response.user)
       navigate('/')
     } catch (err) {
-      setError(err.response?.data?.detail || err.message || 'Authentication failed')
+      // Better error handling - show more details for debugging
+      let errorMsg = 'Authentication failed'
+      if (err.response?.data?.detail) {
+        errorMsg = err.response.data.detail
+      } else if (err.response?.data?.message) {
+        errorMsg = err.response.data.message
+      } else if (err.message) {
+        errorMsg = err.message
+      }
+      // Log full error for debugging
+      console.error('Registration error:', {
+        message: errorMsg,
+        status: err.response?.status,
+        data: err.response?.data,
+        fullError: err
+      })
+      setError(errorMsg)
     } finally {
       setLoading(false)
     }

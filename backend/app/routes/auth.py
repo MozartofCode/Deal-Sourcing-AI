@@ -1,6 +1,7 @@
 """
 Authentication routes
 """
+import logging
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.models import UserCreate, UserLogin, UserResponse, Token
@@ -13,6 +14,8 @@ from app.services.auth_service import (
 )
 from datetime import timedelta
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter()
 security = HTTPBearer()
 
@@ -22,6 +25,8 @@ async def register(user_data: UserCreate):
     """
     Register a new user
     """
+    logger.info(f"Registration attempt for email: {user_data.email}")
+    
     # Create user
     user, error_message = await create_user(
         email=user_data.email,
@@ -30,9 +35,12 @@ async def register(user_data: UserCreate):
     )
     
     if user is None:
+        # Ensure we always have an error message
+        final_error = error_message if error_message else "Email already registered or invalid data"
+        logger.warning(f"Registration failed for {user_data.email}: {final_error}")
         raise HTTPException(
             status_code=400,
-            detail=error_message or "Email already registered or invalid data"
+            detail=final_error
         )
     
     # Create access token
