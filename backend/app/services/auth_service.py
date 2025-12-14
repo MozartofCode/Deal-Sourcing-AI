@@ -3,7 +3,7 @@ Authentication service using JWT and password hashing
 """
 import os
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, Tuple
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from app.database import get_supabase_client
@@ -77,15 +77,25 @@ async def authenticate_user(email: str, password: str) -> Optional[dict]:
         return None
 
 
-async def create_user(email: str, password: str, name: Optional[str] = None) -> Optional[dict]:
-    """Create a new user"""
+async def create_user(email: str, password: str, name: Optional[str] = None) -> Tuple[Optional[dict], Optional[str]]:
+    """
+    Create a new user
+    Returns: (user_dict, error_message)
+    - If successful: (user_dict, None)
+    - If email exists: (None, "Email already registered")
+    - If other error: (None, error_message)
+    """
     supabase = get_supabase_client()
     
     try:
         # Check if user already exists
         existing = supabase.table("users").select("id").eq("email", email).execute()
         if existing.data and len(existing.data) > 0:
-            return None  # User already exists
+            return None, "Email already registered"
+        
+        # Validate password
+        if not password or len(password) < 6:
+            return None, "Password must be at least 6 characters long"
         
         # Hash password
         password_hash = get_password_hash(password)
@@ -107,11 +117,16 @@ async def create_user(email: str, password: str, name: Optional[str] = None) -> 
                 "email": user["email"],
                 "name": user.get("name"),
                 "created_at": user["created_at"]
-            }
-        return None
+            }, None
+        
+        return None, "Failed to create user. Please try again."
     except Exception as e:
-        print(f"User creation error: {e}")
-        return None
+        error_msg = str(e)
+        print(f"User creation error: {error_msg}")
+        # Check for specific database errors
+        if "duplicate" in error_msg.lower() or "unique" in error_msg.lower():
+            return None, "Email already registered"
+        return None, f"Database error: {error_msg}"
 
 
 async def get_user_by_id(user_id: str) -> Optional[dict]:

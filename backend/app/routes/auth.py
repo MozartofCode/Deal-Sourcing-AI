@@ -23,7 +23,7 @@ async def register(user_data: UserCreate):
     Register a new user
     """
     # Create user
-    user = await create_user(
+    user, error_message = await create_user(
         email=user_data.email,
         password=user_data.password,
         name=user_data.name
@@ -32,7 +32,7 @@ async def register(user_data: UserCreate):
     if user is None:
         raise HTTPException(
             status_code=400,
-            detail="Email already registered or invalid data"
+            detail=error_message or "Email already registered or invalid data"
         )
     
     # Create access token
