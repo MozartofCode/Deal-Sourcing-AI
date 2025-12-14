@@ -42,7 +42,7 @@ def get_user_id(request: Request) -> str:
 @router.post("/discover")
 async def discover_startups(request: StartupSearchRequest, http_request: Request):
     """
-    Discover startups using OpenAI to generate search results
+    Discover startups using Ollama (free AI) to generate search results
     """
     user_id = get_user_id(http_request)
     
@@ -96,7 +96,7 @@ Format the response as a clear list with these details for each startup."""
 @router.post("/analyze")
 async def analyze_startup(request: StartupAnalysisRequest, http_request: Request):
     """
-    Analyze a startup using OpenAI - IP, financials, team, market position
+    Analyze a startup using Ollama (free AI) - IP, financials, team, market position
     """
     user_id = get_user_id(http_request)
     
@@ -179,7 +179,7 @@ Be detailed and data-driven.""",
 @router.post("/search")
 async def search(request: SearchRequest, http_request: Request):
     """
-    General search across startups, founders, technologies, and markets using OpenAI
+    General search across startups, founders, technologies, and markets using Ollama (free AI)
     """
     user_id = get_user_id(http_request)
     

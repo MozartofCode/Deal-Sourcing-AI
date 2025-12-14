@@ -92,9 +92,14 @@ async def create_user(email: str, password: str, name: Optional[str] = None) -> 
     
     try:
         # Check if user already exists
-        existing = supabase.table("users").select("id").eq("email", email).execute()
-        if existing.data and len(existing.data) > 0:
-            return None, "Email already registered"
+        try:
+            existing = supabase.table("users").select("id").eq("email", email).execute()
+            if existing.data and len(existing.data) > 0:
+                logger.info(f"Registration attempt with existing email: {email}")
+                return None, "Email already registered"
+        except Exception as check_error:
+            logger.warning(f"Error checking existing user: {check_error}")
+            # Continue anyway, the insert will fail if duplicate
         
         # Validate password
         if not password or len(password) < 6:
@@ -111,27 +116,46 @@ async def create_user(email: str, password: str, name: Optional[str] = None) -> 
             "created_at": datetime.utcnow().isoformat()
         }
         
-        response = supabase.table("users").insert(user_data).execute()
-        
-        if response.data and len(response.data) > 0:
-            user = response.data[0]
-            return {
-                "id": user["id"],
-                "email": user["email"],
-                "name": user.get("name"),
-                "created_at": user["created_at"]
-            }, None
-        
-        return None, "Failed to create user. Please try again."
+        try:
+            response = supabase.table("users").insert(user_data).execute()
+            
+            if response.data and len(response.data) > 0:
+                user = response.data[0]
+                logger.info(f"Successfully created user: {email}")
+                return {
+                    "id": user["id"],
+                    "email": user["email"],
+                    "name": user.get("name"),
+                    "created_at": user["created_at"]
+                }, None
+            
+            logger.warning(f"Insert succeeded but no data returned for: {email}")
+            return None, "Failed to create user. Please try again."
+        except Exception as insert_error:
+            # Handle Supabase insert errors specifically
+            error_msg = str(insert_error)
+            error_lower = error_msg.lower()
+            
+            logger.error(f"Insert error for {email}: {error_msg}", exc_info=True)
+            
+            # Check for duplicate/unique constraint violations
+            if any(keyword in error_lower for keyword in [
+                "duplicate", "unique", "already exists", "violates unique constraint",
+                "23505", "unique_violation", "email"
+            ]):
+                return None, "Email already registered"
+            
+            # Check for other constraint violations
+            if "constraint" in error_lower or "violates" in error_lower:
+                return None, "Invalid data provided. Please check your information."
+            
+            # Generic database error
+            return None, "Failed to create user. Please try again later."
+            
     except Exception as e:
         error_msg = str(e)
-        logger.error(f"User creation error for {email}: {error_msg}", exc_info=True)
-        # Check for specific database errors
-        if "duplicate" in error_msg.lower() or "unique" in error_msg.lower() or "already exists" in error_msg.lower():
-            return None, "Email already registered"
-        # Don't expose internal database errors to users, but log them
-        logger.error(f"Database error details: {error_msg}")
-        return None, "Failed to create user. Please check your information and try again."
+        logger.error(f"Unexpected error creating user {email}: {error_msg}", exc_info=True)
+        return None, "An unexpected error occurred. Please try again later."
 
 
 async def get_user_by_id(user_id: str) -> Optional[dict]:

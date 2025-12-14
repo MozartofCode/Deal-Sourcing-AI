@@ -91,16 +91,6 @@ function Navigation() {
             >
               Search
             </Link>
-            <Link
-              to="/chat"
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/chat')
-                  ? 'bg-blue-50 text-blue-600'
-                  : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
-              }`}
-            >
-              AI Assistant
-            </Link>
             {user ? (
               <div className="flex items-center gap-4">
                 <span className="text-sm text-gray-700">{user.name || user.email}</span>
@@ -201,16 +191,6 @@ function Navigation() {
           >
             Search
           </Link>
-            <Link
-              to="/chat"
-              className={`block px-3 py-2 rounded-lg text-base font-medium ${
-                isActive('/chat')
-                  ? 'bg-blue-50 text-blue-600'
-                  : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
-              }`}
-            >
-              AI Assistant
-            </Link>
             {user ? (
               <>
                 <div className="px-3 py-2 text-sm text-gray-700 border-t border-blue-100 mt-2 pt-2">

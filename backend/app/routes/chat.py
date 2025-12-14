@@ -39,7 +39,7 @@ def get_user_id(request: Request) -> str:
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest, http_request: Request):
     """
-    Chat endpoint with OpenAI integration and rate limiting
+    Chat endpoint with Ollama (free AI) integration and rate limiting
     Max 5 requests per user per hour
     """
     # Get user identifier for rate limiting
@@ -63,7 +63,7 @@ async def chat(request: ChatRequest, http_request: Request):
         raise HTTPException(status_code=400, detail="Message cannot be empty")
     
     try:
-        # Get response from OpenAI
+        # Get response from Ollama
         response_message = await get_openai_response(request.message)
         
         # Generate conversation_id if not provided
@@ -75,9 +75,9 @@ async def chat(request: ChatRequest, http_request: Request):
             remaining_requests=remaining
         )
     except ValueError as e:
-        # OpenAI API key not configured
+        # Ollama not configured or not running
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        # Other OpenAI errors
+        # Other Ollama errors
         raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
 

@@ -16,10 +16,13 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }, [])
 
+  // Compute authentication status based on current state
+  const authStatus = user !== null || isAuthenticated()
+
   const value = {
     user,
     setUser,
-    isAuthenticated: isAuthenticated(),
+    isAuthenticated: authStatus,
     token: getAuthToken(),
   }
 

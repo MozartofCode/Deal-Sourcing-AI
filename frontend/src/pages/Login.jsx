@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { login, register } from '../services/api'
 import { useAuth } from '../components/AuthContext'
 
@@ -11,7 +11,11 @@ function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const { setUser } = useAuth()
+
+  // Get the page the user was trying to access before being redirected to login
+  const from = location.state?.from?.pathname || '/'
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -32,7 +36,8 @@ function Login() {
       }
 
       setUser(response.user)
-      navigate('/')
+      // Redirect to the page they were trying to access, or home if none
+      navigate(from, { replace: true })
     } catch (err) {
       // Better error handling - show more details for debugging
       let errorMsg = 'Authentication failed'

@@ -1,6 +1,18 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../components/AuthContext'
 
 function Home() {
+  const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
+
+  const handleProtectedClick = (path) => {
+    if (isAuthenticated) {
+      navigate(path)
+    } else {
+      navigate('/login', { state: { from: { pathname: path } } })
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Hero Section */}
@@ -14,18 +26,18 @@ function Home() {
             Make data-driven investment decisions with AI-powered insights.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              to="/discover"
+            <button
+              onClick={() => handleProtectedClick('/discover')}
               className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-md"
             >
               Discover Startups
-            </Link>
-            <Link
-              to="/analysis"
+            </button>
+            <button
+              onClick={() => handleProtectedClick('/analysis')}
               className="px-6 py-3 bg-white text-blue-600 border-2 border-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors"
             >
               Analyze Startup
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -52,12 +64,12 @@ function Home() {
             <p className="text-gray-600">
               Find promising startups across industries. Search by sector, stage, location, and more.
             </p>
-            <Link
-              to="/discover"
+            <button
+              onClick={() => handleProtectedClick('/discover')}
               className="mt-4 inline-block text-blue-600 font-medium hover:text-blue-700"
             >
               Explore →
-            </Link>
+            </button>
           </div>
 
           {/* Feature 2 */}
@@ -81,12 +93,12 @@ function Home() {
             <p className="text-gray-600">
               Deep dive into IP portfolios, financial metrics, and founding team backgrounds.
             </p>
-            <Link
-              to="/analysis"
+            <button
+              onClick={() => handleProtectedClick('/analysis')}
               className="mt-4 inline-block text-blue-600 font-medium hover:text-blue-700"
             >
               Analyze →
-            </Link>
+            </button>
           </div>
 
           {/* Feature 3 */}
@@ -110,44 +122,15 @@ function Home() {
             <p className="text-gray-600">
               Organize and track startups you're interested in. Save notes, documents, and insights.
             </p>
-            <Link
-              to="/portfolio"
+            <button
+              onClick={() => handleProtectedClick('/portfolio')}
               className="mt-4 inline-block text-blue-600 font-medium hover:text-blue-700"
             >
               View Portfolio →
-            </Link>
+            </button>
           </div>
 
           {/* Feature 4 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-              <svg
-                className="w-6 h-6 text-blue-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">AI Assistant</h3>
-            <p className="text-gray-600">
-              Get instant answers and insights about startups, markets, and investment strategies.
-            </p>
-            <Link
-              to="/chat"
-              className="mt-4 inline-block text-blue-600 font-medium hover:text-blue-700"
-            >
-              Chat Now →
-            </Link>
-          </div>
-
-          {/* Feature 5 */}
           <div className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
               <svg
@@ -168,15 +151,15 @@ function Home() {
             <p className="text-gray-600">
               Powerful search across startups, founders, technologies, and market trends.
             </p>
-            <Link
-              to="/search"
+            <button
+              onClick={() => handleProtectedClick('/search')}
               className="mt-4 inline-block text-blue-600 font-medium hover:text-blue-700"
             >
               Search →
-            </Link>
+            </button>
           </div>
 
-          {/* Feature 6 */}
+          {/* Feature 5 */}
           <div className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
               <svg

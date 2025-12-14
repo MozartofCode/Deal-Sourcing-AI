@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './components/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
 import Navigation from './components/Navigation'
 import Home from './pages/Home'
 import DiscoverStartups from './pages/DiscoverStartups'
@@ -18,11 +19,46 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/discover" element={<DiscoverStartups />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/analysis" element={<StartupAnalysis />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/chat" element={<Chat />} />
+            <Route
+              path="/discover"
+              element={
+                <ProtectedRoute>
+                  <DiscoverStartups />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/portfolio"
+              element={
+                <ProtectedRoute>
+                  <Portfolio />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/analysis"
+              element={
+                <ProtectedRoute>
+                  <StartupAnalysis />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <ProtectedRoute>
+                  <Search />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/chat"
+              element={
+                <ProtectedRoute>
+                  <Chat />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
       </Router>

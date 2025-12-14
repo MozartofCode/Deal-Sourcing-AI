@@ -44,18 +44,17 @@ cd backend
 pip install -r requirements.txt
 ```
 
-3. Create `.env` file and add your OpenAI API key:
-```bash
-# Copy the example file
-cp .env.example .env
+3. **No installation needed!** The app uses Hugging Face Inference API (free, cloud-based, no disk space required).
 
-# Edit .env and add your OpenAI API key
-# OPENAI_API_KEY=sk-your-actual-api-key-here
-```
+4. (Optional) Get a free Hugging Face API key for better performance:
+   - Sign up at: https://huggingface.co/join
+   - Get your token at: https://huggingface.co/settings/tokens
+   - Create `.env` file in `backend` folder:
+     ```env
+     HF_API_KEY=your-token-here
+     ```
 
-Get your API key from: https://platform.openai.com/api-keys
-
-4. Start the server:
+5. Start the server:
 ```bash
 uvicorn app.main:app --reload --port 8000
 ```
@@ -67,14 +66,14 @@ The backend API will be available at `http://localhost:8000`
 - ChatGPT-like chat interface with message bubbles
 - Left sidebar with conversation history
 - Responsive design (mobile-friendly)
-- FastAPI backend with OpenAI integration
+- FastAPI backend with Hugging Face (free, cloud AI) integration
 - Rate limiting (5 requests per user per hour)
 - CORS configured for frontend-backend communication
 
 ## API Endpoints
 
 - `GET /health` - Health check
-- `POST /api/chat` - Send chat message (OpenAI-powered, rate limited)
+- `POST /api/chat` - Send chat message (Hugging Face-powered, rate limited)
 - `GET /api/history` - Get conversation history (mock data)
 - `POST /api/history` - Create new conversation (placeholder)
 
@@ -99,7 +98,7 @@ Once the backend is running:
 ### Quick Summary:
 - **Frontend**: Deploy to [Vercel](https://vercel.com) (free, auto-deploys on push)
 - **Backend**: Deploy to [Render.com](https://render.com) (free tier, auto-deploys on push)
-- **Secrets**: Store your OpenAI key securely in platform environment variables (never in code!)
+- **AI**: Uses Ollama (free, local) - no API keys needed!
 - **Auto-Deploy**: Every `git push` automatically deploys your changes
 
 ### Why This Setup?
@@ -113,7 +112,11 @@ See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions!
 ## Environment Variables
 
 ### Backend (.env)
-- `OPENAI_API_KEY` (required) - Your OpenAI API key
+- `AI_PROVIDER` (optional, default: `huggingface`) - Choose "huggingface" or "ollama"
+- `HF_API_KEY` (optional) - Hugging Face API token (free, recommended)
+- `HF_API_URL` (optional) - Hugging Face model URL
+- `OLLAMA_BASE_URL` (optional) - Ollama server URL (if using Ollama)
+- `OLLAMA_MODEL` (optional) - Model to use (if using Ollama)
 - `ALLOWED_ORIGINS` (optional) - Comma-separated CORS origins
 
 ### Frontend (.env)
@@ -121,7 +124,9 @@ See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions!
 
 ## Important Notes
 
-- **OpenAI API Key**: You must add your OpenAI API key to the backend `.env` file
+- **Hugging Face**: Free cloud-based AI - no installation or disk space needed!
+- **Free API Key**: Optional but recommended - sign up at https://huggingface.co for better performance
 - **Rate Limiting**: Users are limited to 5 requests per hour (per IP address)
 - **CORS**: Update `ALLOWED_ORIGINS` in production to include your frontend URL
 - **System Prompt**: The AI is configured as a professional VC analyst focused on innovative and profitable products
+- **First Request**: Free tier models may take 20-30 seconds on first request (they "wake up" from sleep)
