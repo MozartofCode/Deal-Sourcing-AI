@@ -39,13 +39,13 @@ function SearchBar({ onSendMessage, isLoading }) {
           onKeyDown={handleKeyDown}
           placeholder="Type your message..."
           rows={1}
-          className="w-full px-4 py-3 pr-12 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none max-h-32 overflow-y-auto"
+          className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 resize-none max-h-32 overflow-y-auto"
           disabled={isLoading}
         />
         <button
           type="submit"
           disabled={!input.trim() || isLoading}
-          className="absolute right-2 bottom-2 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          className="absolute right-2 bottom-2 p-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           <svg
             className="w-5 h-5"

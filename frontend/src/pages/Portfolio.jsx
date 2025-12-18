@@ -93,7 +93,7 @@ function Portfolio() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8 flex items-center justify-between">
           <div>
@@ -104,7 +104,7 @@ function Portfolio() {
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-md"
+            className="px-6 py-3 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors shadow-md"
           >
             + Add Startup
           </button>
@@ -115,25 +115,25 @@ function Portfolio() {
           <div className="text-center py-8">Loading...</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="text-2xl font-bold text-gray-900 mb-1">
                 {stats.total}
               </div>
               <div className="text-sm text-gray-600">Total Startups</div>
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6">
-              <div className="text-2xl font-bold text-blue-600 mb-1">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="text-2xl font-bold text-gray-800 mb-1">
                 {stats.active}
               </div>
               <div className="text-sm text-gray-600">Active</div>
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="text-2xl font-bold text-yellow-600 mb-1">
                 {stats.reviewing}
               </div>
               <div className="text-sm text-gray-600">Under Review</div>
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="text-2xl font-bold text-green-600 mb-1">
                 {stats.invested}
               </div>
@@ -143,10 +143,10 @@ function Portfolio() {
         )}
 
         {/* Portfolio Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-blue-100 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-blue-50">
+              <thead className="bg-gray-100">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Startup
@@ -168,9 +168,9 @@ function Portfolio() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-blue-100">
+              <tbody className="divide-y divide-gray-200">
                 {savedStartups.map((startup) => (
-                  <tr key={startup.id} className="hover:bg-blue-50">
+                  <tr key={startup.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-gray-900">
@@ -183,7 +183,7 @@ function Portfolio() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {startup.industry && (
-                        <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                        <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
                           {startup.industry}
                         </span>
                       )}
@@ -201,7 +201,7 @@ function Portfolio() {
                             : startup.status === 'Reviewing'
                             ? 'bg-yellow-100 text-yellow-700'
                             : startup.status === 'Invested'
-                            ? 'bg-blue-100 text-blue-700'
+                            ? 'bg-gray-100 text-gray-700'
                             : 'bg-red-100 text-red-700'
                         }`}
                       >
@@ -247,7 +247,7 @@ function Portfolio() {
               <p className="text-gray-400 text-sm mb-4">
                 Start adding startups to track your investments
               </p>
-              <button className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+              <button className="px-6 py-3 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors">
                 Add Your First Startup
               </button>
             </div>
@@ -256,30 +256,30 @@ function Portfolio() {
 
         {/* Quick Actions */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Export Data</h3>
             <p className="text-gray-600 text-sm mb-4">
               Download your portfolio as CSV or PDF
             </p>
-            <button className="w-full px-4 py-2 border border-blue-600 text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+            <button className="w-full px-4 py-2 border border-gray-800 text-gray-800 rounded-lg font-medium hover:bg-gray-50 transition-colors">
               Export
             </button>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Generate Report</h3>
             <p className="text-gray-600 text-sm mb-4">
               Create a comprehensive analysis report
             </p>
-            <button className="w-full px-4 py-2 border border-blue-600 text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+            <button className="w-full px-4 py-2 border border-gray-800 text-gray-800 rounded-lg font-medium hover:bg-gray-50 transition-colors">
               Generate
             </button>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Share Portfolio</h3>
             <p className="text-gray-600 text-sm mb-4">
               Share your portfolio with team members
             </p>
-            <button className="w-full px-4 py-2 border border-blue-600 text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+            <button className="w-full px-4 py-2 border border-gray-800 text-gray-800 rounded-lg font-medium hover:bg-gray-50 transition-colors">
               Share
             </button>
           </div>
@@ -300,7 +300,7 @@ function Portfolio() {
                   type="text"
                   value={newStartup.startup_name}
                   onChange={(e) => setNewStartup({ ...newStartup, startup_name: e.target.value })}
-                  className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
                   placeholder="Enter startup name"
                   required
                 />
@@ -313,7 +313,7 @@ function Portfolio() {
                   type="text"
                   value={newStartup.industry}
                   onChange={(e) => setNewStartup({ ...newStartup, industry: e.target.value })}
-                  className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
                   placeholder="e.g., SaaS, Fintech"
                 />
               </div>
@@ -325,7 +325,7 @@ function Portfolio() {
                   type="text"
                   value={newStartup.stage}
                   onChange={(e) => setNewStartup({ ...newStartup, stage: e.target.value })}
-                  className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
                   placeholder="e.g., Seed, Series A"
                 />
               </div>
@@ -336,7 +336,7 @@ function Portfolio() {
                 <textarea
                   value={newStartup.notes}
                   onChange={(e) => setNewStartup({ ...newStartup, notes: e.target.value })}
-                  className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
                   rows="3"
                   placeholder="Add your notes about this startup..."
                 />
@@ -345,7 +345,7 @@ function Portfolio() {
             <div className="flex gap-4 mt-6">
               <button
                 onClick={handleAddStartup}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+                className="flex-1 px-4 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900"
               >
                 Add Startup
               </button>

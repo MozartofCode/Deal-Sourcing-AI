@@ -115,7 +115,7 @@ function DiscoverStartups() {
   })
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Discover Startups</h1>
@@ -125,7 +125,7 @@ function DiscoverStartups() {
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
           <div className="space-y-4">
             {/* Search Bar */}
             <div>
@@ -139,7 +139,7 @@ function DiscoverStartups() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                   placeholder="Search by name, description, or keywords..."
-                  className="w-full px-4 py-3 pl-10 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                 />
                 <svg
                   className="absolute left-3 top-3.5 w-5 h-5 text-gray-400"
@@ -166,7 +166,7 @@ function DiscoverStartups() {
                 <select
                   value={selectedIndustry}
                   onChange={(e) => setSelectedIndustry(e.target.value)}
-                  className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                 >
                   {industries.map((industry) => (
                     <option
@@ -185,7 +185,7 @@ function DiscoverStartups() {
                 <select
                   value={selectedStage}
                   onChange={(e) => setSelectedStage(e.target.value)}
-                  className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                 >
                   {stages.map((stage) => (
                     <option
@@ -201,7 +201,7 @@ function DiscoverStartups() {
             <button
               onClick={handleSearch}
               disabled={!searchQuery.trim() || isSearching}
-              className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+              className="w-full px-6 py-3 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
             >
               {isSearching ? 'Searching...' : 'Search with AI'}
             </button>
@@ -210,7 +210,7 @@ function DiscoverStartups() {
 
         {/* AI Search Results */}
         {searchResults && (
-          <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 mb-8">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">AI Search Results</h2>
             <div className="prose max-w-none">
               <div className="whitespace-pre-wrap text-gray-700">{searchResults}</div>
@@ -238,7 +238,7 @@ function DiscoverStartups() {
               {filteredStartups.map((startup) => (
             <div
               key={startup.id}
-              className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 hover:shadow-md transition-shadow"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -268,7 +268,7 @@ function DiscoverStartups() {
                     {startup.location}
                   </div>
                 </div>
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
                   {startup.stage}
                 </span>
               </div>
@@ -291,10 +291,10 @@ function DiscoverStartups() {
               </div>
 
               <div className="flex gap-2">
-                <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                <button className="flex-1 px-4 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors">
                   View Details
                 </button>
-                <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                <button className="px-4 py-2 border border-gray-800 text-gray-800 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                   Save
                 </button>
               </div>

@@ -14,12 +14,12 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            Welcome to <span className="text-blue-600" style={{ fontFamily: 'serif' }}>Scout</span>
+            Welcome to <span className="text-gray-800" style={{ fontFamily: 'serif' }}>Scout</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Your intelligent platform for startup discovery, analysis, and portfolio management.
@@ -28,13 +28,13 @@ function Home() {
           <div className="flex flex-wrap justify-center gap-4">
             <button
               onClick={() => handleProtectedClick('/discover')}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-md"
+              className="px-6 py-3 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors shadow-md"
             >
               Discover Startups
             </button>
             <button
               onClick={() => handleProtectedClick('/analysis')}
-              className="px-6 py-3 bg-white text-blue-600 border-2 border-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors"
+              className="px-6 py-3 bg-white text-gray-800 border-2 border-gray-800 rounded-lg font-medium hover:bg-gray-50 transition-colors"
             >
               Analyze Startup
             </button>
@@ -44,10 +44,10 @@ function Home() {
         {/* Features Grid */}
         <div className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Feature 1 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
               <svg
-                className="w-6 h-6 text-blue-600"
+                className="w-6 h-6 text-gray-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -66,17 +66,17 @@ function Home() {
             </p>
             <button
               onClick={() => handleProtectedClick('/discover')}
-              className="mt-4 inline-block text-blue-600 font-medium hover:text-blue-700"
+              className="mt-4 inline-block text-gray-700 font-medium hover:text-gray-900"
             >
               Explore →
             </button>
           </div>
 
           {/* Feature 2 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
               <svg
-                className="w-6 h-6 text-blue-600"
+                className="w-6 h-6 text-gray-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -95,17 +95,17 @@ function Home() {
             </p>
             <button
               onClick={() => handleProtectedClick('/analysis')}
-              className="mt-4 inline-block text-blue-600 font-medium hover:text-blue-700"
+              className="mt-4 inline-block text-gray-700 font-medium hover:text-gray-900"
             >
               Analyze →
             </button>
           </div>
 
           {/* Feature 3 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
               <svg
-                className="w-6 h-6 text-blue-600"
+                className="w-6 h-6 text-gray-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -124,17 +124,17 @@ function Home() {
             </p>
             <button
               onClick={() => handleProtectedClick('/portfolio')}
-              className="mt-4 inline-block text-blue-600 font-medium hover:text-blue-700"
+              className="mt-4 inline-block text-gray-700 font-medium hover:text-gray-900"
             >
               View Portfolio →
             </button>
           </div>
 
           {/* Feature 4 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
               <svg
-                className="w-6 h-6 text-blue-600"
+                className="w-6 h-6 text-gray-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -153,17 +153,17 @@ function Home() {
             </p>
             <button
               onClick={() => handleProtectedClick('/search')}
-              className="mt-4 inline-block text-blue-600 font-medium hover:text-blue-700"
+              className="mt-4 inline-block text-gray-700 font-medium hover:text-gray-900"
             >
               Search →
             </button>
           </div>
 
           {/* Feature 5 */}
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
               <svg
-                className="w-6 h-6 text-blue-600"
+                className="w-6 h-6 text-gray-700"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -184,18 +184,18 @@ function Home() {
         </div>
 
         {/* Stats Section */}
-        <div className="mt-20 bg-white rounded-xl shadow-sm border border-blue-100 p-8">
+        <div className="mt-20 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-4xl font-bold text-blue-600 mb-2">10K+</div>
+              <div className="text-4xl font-bold text-gray-800 mb-2">10K+</div>
               <div className="text-gray-600">Startups in Database</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-blue-600 mb-2">50+</div>
+              <div className="text-4xl font-bold text-gray-800 mb-2">50+</div>
               <div className="text-gray-600">Industries Covered</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-blue-600 mb-2">24/7</div>
+              <div className="text-4xl font-bold text-gray-800 mb-2">24/7</div>
               <div className="text-gray-600">AI-Powered Insights</div>
             </div>
           </div>

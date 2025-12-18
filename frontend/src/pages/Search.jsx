@@ -39,7 +39,7 @@ function Search() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Search</h1>
@@ -49,7 +49,7 @@ function Search() {
         </div>
 
         {/* Search Bar */}
-        <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
           <div className="space-y-4">
             <div className="relative">
               <input
@@ -58,7 +58,7 @@ function Search() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 placeholder="Search for startups, founders, technologies..."
-                className="w-full px-4 py-4 pl-12 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+                className="w-full px-4 py-4 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-lg"
               />
               <svg
                 className="absolute left-4 top-4.5 w-5 h-5 text-gray-400"
@@ -86,8 +86,8 @@ function Search() {
                     onClick={() => setSearchType(type.value)}
                     className={`px-4 py-2 rounded-lg border-2 transition-all flex items-center gap-2 ${
                       searchType === type.value
-                        ? 'border-blue-600 bg-blue-50 text-blue-700'
-                        : 'border-blue-200 text-gray-700 hover:border-blue-300'
+                        ? 'border-gray-800 bg-gray-100 text-gray-800'
+                        : 'border-gray-300 text-gray-700 hover:border-gray-400'
                     }`}
                   >
                     <span>{type.icon}</span>
@@ -100,7 +100,7 @@ function Search() {
             <button
               onClick={handleSearch}
               disabled={!searchQuery.trim() || isSearching}
-              className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-6 py-3 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSearching ? 'Searching...' : 'Search with AI'}
             </button>
@@ -127,7 +127,7 @@ function Search() {
               )}
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="prose max-w-none">
                 <div className="whitespace-pre-wrap text-gray-700">{results.results}</div>
               </div>
@@ -136,7 +136,7 @@ function Search() {
         )}
 
         {!results && (
-          <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-12 text-center">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
             <svg
               className="w-16 h-16 mx-auto text-gray-300 mb-4"
               fill="none"
@@ -158,23 +158,23 @@ function Search() {
         )}
 
         {/* Search Tips */}
-        <div className="mt-8 bg-blue-50 rounded-xl p-6 border border-blue-100">
+        <div className="mt-8 bg-gray-50 rounded-xl p-6 border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Search Tips</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
             <div className="flex items-start gap-2">
-              <span className="text-blue-600">•</span>
+              <span className="text-gray-700">•</span>
               <span>Use specific keywords for better results</span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-blue-600">•</span>
+              <span className="text-gray-700">•</span>
               <span>Filter by type to narrow down results</span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-blue-600">•</span>
+              <span className="text-gray-700">•</span>
               <span>Search for company names, founder names, or technologies</span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-blue-600">•</span>
+              <span className="text-gray-700">•</span>
               <span>Combine multiple keywords for advanced searches</span>
             </div>
           </div>

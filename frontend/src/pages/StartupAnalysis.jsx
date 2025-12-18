@@ -42,7 +42,7 @@ function StartupAnalysis() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Startup Analysis</h1>
@@ -52,7 +52,7 @@ function StartupAnalysis() {
         </div>
 
         {/* Analysis Input */}
-        <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -63,7 +63,7 @@ function StartupAnalysis() {
                 value={startupName}
                 onChange={(e) => setStartupName(e.target.value)}
                 placeholder="Enter startup name or company..."
-                className="w-full px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
               />
             </div>
 
@@ -78,8 +78,8 @@ function StartupAnalysis() {
                     onClick={() => setAnalysisType(type.value)}
                     className={`p-4 rounded-lg border-2 transition-all ${
                       analysisType === type.value
-                        ? 'border-blue-600 bg-blue-50'
-                        : 'border-blue-200 hover:border-blue-300'
+                        ? 'border-gray-800 bg-gray-100'
+                        : 'border-gray-300 hover:border-gray-400'
                     }`}
                   >
                     <div className="text-2xl mb-2">{type.icon}</div>
@@ -92,7 +92,7 @@ function StartupAnalysis() {
             <button
               onClick={handleAnalyze}
               disabled={!startupName.trim() || isAnalyzing}
-              className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+              className="w-full px-6 py-3 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
             >
               {isAnalyzing ? 'Analyzing...' : 'Analyze Startup'}
             </button>
@@ -102,7 +102,7 @@ function StartupAnalysis() {
         {/* Analysis Results */}
         {analysisResult && (
           <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-bold text-gray-900">
                   Analysis: {analysisResult.startupName}
@@ -125,11 +125,11 @@ function StartupAnalysis() {
               )}
 
               {/* Actions */}
-              <div className="mt-6 pt-6 border-t border-blue-100 flex gap-4">
-                <button className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+              <div className="mt-6 pt-6 border-t border-gray-200 flex gap-4">
+                <button className="px-6 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors">
                   Save to Portfolio
                 </button>
-                <button className="px-6 py-2 border border-blue-600 text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                <button className="px-6 py-2 border border-gray-800 text-gray-800 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                   Export Report
                 </button>
                 <button className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
@@ -141,7 +141,7 @@ function StartupAnalysis() {
         )}
 
         {!analysisResult && !isAnalyzing && (
-          <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-12 text-center">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
             <svg
               className="w-16 h-16 mx-auto text-gray-300 mb-4"
               fill="none"
