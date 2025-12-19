@@ -10,6 +10,7 @@ import StartupAnalysis from './pages/StartupAnalysis'
 import Fundraising from './pages/Fundraising'
 import Chat from './pages/Chat'
 import Login from './pages/Login'
+import AIMatches from './pages/AIMatches'
 
 function App() {
   return (
@@ -65,6 +66,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Chat />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ai-matches"
+              element={
+                <ProtectedRoute>
+                  <AIMatches />
                 </ProtectedRoute>
               }
             />

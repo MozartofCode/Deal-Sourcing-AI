@@ -96,16 +96,26 @@ function Navigation() {
                 >
                   My Portfolio
                 </Link>
-                <Link
-                  to="/analysis"
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive('/analysis')
-                      ? 'bg-gray-100 text-gray-800'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                  }`}
-                >
-                  Startup Analysis
-                </Link>
+            <Link
+              to="/analysis"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive('/analysis')
+                  ? 'bg-gray-100 text-gray-800'
+                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+              }`}
+            >
+              Startup Analysis
+            </Link>
+            <Link
+              to="/ai-matches"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive('/ai-matches')
+                  ? 'bg-gray-100 text-gray-800'
+                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+              }`}
+            >
+              AI Matches
+            </Link>
               </>
             )}
             {user ? (
@@ -222,6 +232,16 @@ function Navigation() {
                 }`}
               >
                 Startup Analysis
+              </Link>
+              <Link
+                to="/ai-matches"
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${
+                  isActive('/ai-matches')
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                }`}
+              >
+                AI Matches
               </Link>
             </>
           )}

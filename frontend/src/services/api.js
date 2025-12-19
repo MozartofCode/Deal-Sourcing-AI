@@ -181,5 +181,141 @@ export const getPortfolioStats = async () => {
   return response.data
 }
 
+// Tracking APIs
+export const saveSearchHistory = async (searchType, query, filters = null, resultsCount = null) => {
+  const response = await api.post('/api/tracking/search-history', {
+    search_type: searchType,
+    query,
+    filters,
+    results_count: resultsCount,
+  })
+  return response.data
+}
+
+export const trackProfileView = async (viewedType, viewedId, viewedName = null, metadata = null) => {
+  const response = await api.post('/api/tracking/profile-view', {
+    viewed_type: viewedType,
+    viewed_id: viewedId,
+    viewed_name: viewedName,
+    metadata,
+  })
+  return response.data
+}
+
+export const saveItem = async (itemType, itemId, itemName, itemData = null, notes = null, tags = null) => {
+  const response = await api.post('/api/tracking/saved-items', {
+    item_type: itemType,
+    item_id: itemId,
+    item_name: itemName,
+    item_data: itemData,
+    notes,
+    tags,
+  })
+  return response.data
+}
+
+export const getSavedItems = async (itemType = null) => {
+  const params = itemType ? { item_type: itemType } : {}
+  const response = await api.get('/api/tracking/saved-items', { params })
+  return response.data
+}
+
+export const deleteSavedItem = async (itemId, itemType) => {
+  const response = await api.delete(`/api/tracking/saved-items/${itemId}?item_type=${itemType}`)
+  return response.data
+}
+
+// Profile APIs
+export const getMyProfile = async () => {
+  const response = await api.get('/api/profiles/me')
+  return response.data
+}
+
+export const updateMyProfile = async (profileData) => {
+  const response = await api.put('/api/profiles/me', profileData)
+  return response.data
+}
+
+export const getUserProfile = async (userId) => {
+  const response = await api.get(`/api/profiles/${userId}`)
+  return response.data
+}
+
+export const searchProfiles = async (userType = null, industry = null) => {
+  const params = {}
+  if (userType) params.user_type = userType
+  if (industry) params.industry = industry
+  const response = await api.get('/api/profiles/', { params })
+  return response.data
+}
+
+// Messaging APIs
+export const sendMessage = async (recipientId, message, subject = null, relatedItemType = null, relatedItemId = null) => {
+  const response = await api.post('/api/messaging/messages', {
+    recipient_id: recipientId,
+    message,
+    subject,
+    related_item_type: relatedItemType,
+    related_item_id: relatedItemId,
+  })
+  return response.data
+}
+
+export const getMessages = async (conversationWith = null) => {
+  const params = conversationWith ? { conversation_with: conversationWith } : {}
+  const response = await api.get('/api/messaging/messages', { params })
+  return response.data
+}
+
+export const getConversations = async () => {
+  const response = await api.get('/api/messaging/messages/conversations')
+  return response.data
+}
+
+export const markMessageRead = async (messageId) => {
+  const response = await api.put(`/api/messaging/messages/${messageId}/read`)
+  return response.data
+}
+
+export const createConnectionRequest = async (recipientId, message = null) => {
+  const response = await api.post('/api/messaging/connection-requests', {
+    recipient_id: recipientId,
+    message,
+  })
+  return response.data
+}
+
+export const getConnectionRequests = async (status = null) => {
+  const params = status ? { status } : {}
+  const response = await api.get('/api/messaging/connection-requests', { params })
+  return response.data
+}
+
+export const updateConnectionRequest = async (requestId, status) => {
+  const response = await api.put(`/api/messaging/connection-requests/${requestId}`, null, {
+    params: { status },
+  })
+  return response.data
+}
+
+// AI Matching APIs
+export const generateAIMatches = async () => {
+  const response = await api.post('/api/ai/generate-matches')
+  return response.data
+}
+
+export const getAIMatches = async (status = null) => {
+  const params = status ? { status } : {}
+  const response = await api.get('/api/ai/matches', { params })
+  return response.data
+}
+
+export const updateMatchStatus = async (matchId, status) => {
+  const response = await api.put(`/api/ai/matches/${matchId}`, null, {
+    params: { status },
+  })
+  return response.data
+}
+
 export default api
 
