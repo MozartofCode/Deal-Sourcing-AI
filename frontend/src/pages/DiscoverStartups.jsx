@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
-import { discoverStartups, saveSearchHistory, trackProfileView, saveItem, getSavedItems } from '../services/api'
+import { useNavigate } from 'react-router-dom'
+import { discoverStartups, saveSearchHistory, trackProfileView, saveItem, getSavedItems, searchProfiles } from '../services/api'
+import MessageModal from '../components/MessageModal'
 
 function DiscoverStartups() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -9,6 +11,9 @@ function DiscoverStartups() {
   const [searchResults, setSearchResults] = useState(null)
   const [error, setError] = useState(null)
   const [savedItems, setSavedItems] = useState([])
+  const [showMessageModal, setShowMessageModal] = useState(false)
+  const [selectedStartup, setSelectedStartup] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     loadSavedItems()
@@ -83,6 +88,13 @@ function DiscoverStartups() {
     } catch (error) {
       console.error('Failed to track view:', error)
     }
+  }
+
+  const handleMessageStartup = async (startup) => {
+    // For now, we'll show a message that they need to find the entrepreneur's profile
+    // In a real implementation, you'd link startups to user profiles
+    alert('To message the entrepreneur behind this startup, please find their profile in the AI Matches or search for their profile.')
+    navigate('/ai-matches')
   }
 
   // Mock data - fallback for display
@@ -341,6 +353,13 @@ function DiscoverStartups() {
                   className="flex-1 px-4 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors"
                 >
                   View Details
+                </button>
+                <button 
+                  onClick={() => handleMessageStartup(startup)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  title="Message the entrepreneur"
+                >
+                  💬 Message
                 </button>
                 <button 
                   onClick={() => handleSaveItem(startup)}

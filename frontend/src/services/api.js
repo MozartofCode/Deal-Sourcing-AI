@@ -37,7 +37,7 @@ api.interceptors.response.use(
   }
 )
 
-export const sendMessage = async (message, conversationId = null) => {
+export const sendChatMessage = async (message, conversationId = null) => {
   const response = await api.post('/api/chat', {
     message,
     conversation_id: conversationId,
@@ -249,8 +249,8 @@ export const searchProfiles = async (userType = null, industry = null) => {
   return response.data
 }
 
-// Messaging APIs
-export const sendMessage = async (recipientId, message, subject = null, relatedItemType = null, relatedItemId = null) => {
+// Direct Messaging APIs (between users)
+export const sendDirectMessage = async (recipientId, message, subject = null, relatedItemType = null, relatedItemId = null) => {
   const response = await api.post('/api/messaging/messages', {
     recipient_id: recipientId,
     message,

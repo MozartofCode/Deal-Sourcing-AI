@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
-import { discoverStartups, saveSearchHistory, trackProfileView, saveItem, getSavedItems } from '../services/api'
+import { useNavigate } from 'react-router-dom'
+import { discoverStartups, saveSearchHistory, trackProfileView, saveItem, getSavedItems, searchProfiles } from '../services/api'
+import MessageModal from '../components/MessageModal'
 
 function DiscoverVCs() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -9,6 +11,10 @@ function DiscoverVCs() {
   const [searchResults, setSearchResults] = useState(null)
   const [error, setError] = useState(null)
   const [savedItems, setSavedItems] = useState([])
+  const [showMessageModal, setShowMessageModal] = useState(false)
+  const [selectedVC, setSelectedVC] = useState(null)
+  const [vcProfiles, setVcProfiles] = useState({}) // Map VC names to user IDs
+  const navigate = useNavigate()
 
   useEffect(() => {
     loadSavedItems()
@@ -83,6 +89,31 @@ function DiscoverVCs() {
       await trackProfileView('vc', vc.id.toString(), vc.name, vc)
     } catch (error) {
       console.error('Failed to track view:', error)
+    }
+  }
+
+  const handleMessageVC = async (vc) => {
+    // Try to find the VC's user profile
+    try {
+      const profiles = await searchProfiles('investor', vc.focus?.split(',')[0] || null)
+      const matchingProfile = profiles.find(p => 
+        p.company_name?.toLowerCase().includes(vc.name.toLowerCase()) ||
+        vc.name.toLowerCase().includes(p.company_name?.toLowerCase() || '')
+      )
+      
+      if (matchingProfile) {
+        setSelectedVC({ ...vc, userId: matchingProfile.user_id, userName: matchingProfile.company_name })
+        setShowMessageModal(true)
+      } else {
+        // If no profile found, show message modal anyway (user can still send)
+        setSelectedVC({ ...vc, userId: null, userName: vc.name })
+        setShowMessageModal(true)
+      }
+    } catch (error) {
+      console.error('Failed to find VC profile:', error)
+      // Show modal anyway
+      setSelectedVC({ ...vc, userId: null, userName: vc.name })
+      setShowMessageModal(true)
     }
   }
 
@@ -347,6 +378,13 @@ function DiscoverVCs() {
                       View Profile
                     </button>
                     <button 
+                      onClick={() => handleMessageVC(vc)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                      title="Message this VC"
+                    >
+                      💬 Message
+                    </button>
+                    <button 
                       onClick={() => handleSaveItem(vc)}
                       className={`px-4 py-2 border rounded-lg font-medium transition-colors ${
                         savedItems.includes(vc.id.toString())
@@ -383,6 +421,20 @@ function DiscoverVCs() {
           </div>
         )}
       </div>
+
+      {/* Message Modal */}
+      {selectedVC && (
+        <MessageModal
+          isOpen={showMessageModal}
+          onClose={() => {
+            setShowMessageModal(false)
+            setSelectedVC(null)
+          }}
+          recipientId={selectedVC.userId}
+          recipientName={selectedVC.userName || selectedVC.name}
+          subject={selectedVC.userId ? `Interest in ${selectedVC.name}` : null}
+        />
+      )}
     </div>
   )
 }

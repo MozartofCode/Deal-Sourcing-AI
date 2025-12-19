@@ -1,15 +1,22 @@
 import { useState, useEffect } from 'react'
-import { getConversations, getMessages, sendMessage, markMessageRead } from '../services/api'
+import { useNavigate } from 'react-router-dom'
+import { getConversations, getMessages, sendDirectMessage, markMessageRead, searchProfiles } from '../services/api'
 import { useAuth } from '../components/AuthContext'
 
 function Messages() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [conversations, setConversations] = useState([])
   const [selectedConversation, setSelectedConversation] = useState(null)
   const [messages, setMessages] = useState([])
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [showNewMessageModal, setShowNewMessageModal] = useState(false)
+  const [showUserSearch, setShowUserSearch] = useState(false)
+  const [userSearchQuery, setUserSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [selectedRecipient, setSelectedRecipient] = useState(null)
 
   useEffect(() => {
     loadConversations()
@@ -60,7 +67,7 @@ function Messages() {
 
     try {
       setSending(true)
-      await sendMessage(selectedConversation.user_id, newMessage.trim())
+      await sendDirectMessage(selectedConversation.user_id, newMessage.trim())
       setNewMessage('')
       await loadMessages(selectedConversation.user_id)
     } catch (error) {
@@ -86,8 +93,18 @@ function Messages() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Messages</h1>
-          <p className="text-gray-600">Connect and communicate with other users</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">Messages</h1>
+              <p className="text-gray-600">Connect and communicate with other users</p>
+            </div>
+            <button
+              onClick={() => setShowNewMessageModal(true)}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              + New Message
+            </button>
+          </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -215,6 +232,40 @@ function Messages() {
             </div>
           </div>
         </div>
+
+        {/* New Message Modal - Note: Users need to find recipients through AI Matches or Profiles */}
+        {showNewMessageModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Start New Conversation</h2>
+              <p className="text-gray-600 mb-6">
+                To message someone, you can:
+              </p>
+              <ul className="list-disc list-inside text-gray-600 mb-6 space-y-2">
+                <li>Find matches in <strong>AI Matches</strong> and message them directly</li>
+                <li>View user <strong>Profiles</strong> and click "Send Message"</li>
+                <li>Click the <strong>💬 Message</strong> button on VC cards</li>
+              </ul>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowNewMessageModal(false)
+                    navigate('/ai-matches')
+                  }}
+                  className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                >
+                  Go to AI Matches
+                </button>
+                <button
+                  onClick={() => setShowNewMessageModal(false)}
+                  className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

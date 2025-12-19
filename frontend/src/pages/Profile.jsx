@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getMyProfile, updateMyProfile, getUserProfile } from '../services/api'
 import { useAuth } from '../components/AuthContext'
+import MessageModal from '../components/MessageModal'
 
 function Profile() {
   const { userId } = useParams()
@@ -11,6 +12,7 @@ function Profile() {
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [showMessageModal, setShowMessageModal] = useState(false)
   const [formData, setFormData] = useState({
     bio: '',
     company_name: '',
@@ -337,8 +339,31 @@ function Profile() {
               )}
             </div>
           )}
+
+          {/* Message button for viewing other users' profiles */}
+          {!isOwnProfile && profile && (
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <button
+                onClick={() => setShowMessageModal(true)}
+                className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              >
+                💬 Send Message
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Message Modal */}
+      {!isOwnProfile && profile && (
+        <MessageModal
+          isOpen={showMessageModal}
+          onClose={() => setShowMessageModal(false)}
+          recipientId={userId}
+          recipientName={profile.company_name || profile.user_id}
+          subject={`Connection Request`}
+        />
+      )}
     </div>
   )
 }

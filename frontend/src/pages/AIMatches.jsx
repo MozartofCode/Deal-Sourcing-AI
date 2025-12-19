@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { generateAIMatches, getAIMatches, updateMatchStatus, sendMessage, createConnectionRequest } from '../services/api'
+import { generateAIMatches, getAIMatches, updateMatchStatus, sendDirectMessage, createConnectionRequest } from '../services/api'
 import { useAuth } from '../components/AuthContext'
 
 function AIMatches() {
@@ -66,7 +66,7 @@ function AIMatches() {
       const subject = subjectLine ? subjectLine.split(':')[1].trim() : 'Connection Request'
       const body = lines.filter(line => !line.toLowerCase().startsWith('subject:')).join('\n').trim()
 
-      await sendMessage(selectedMatch.matched_item_id, body, subject)
+      await sendDirectMessage(selectedMatch.matched_item_id, body, subject)
       await updateMatchStatus(selectedMatch.id, 'contacted')
       setShowEmailModal(false)
       setSelectedMatch(null)

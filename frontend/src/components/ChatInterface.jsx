@@ -30,7 +30,7 @@ function ChatInterface({ conversationId, onNewConversation, onHistoryUpdate }) {
     setIsLoading(true)
 
     try {
-      const response = await sendMessage(text, conversationId)
+      const response = await sendChatMessage(text, conversationId)
       
       const assistantMessage = {
         id: Date.now() + 1,
