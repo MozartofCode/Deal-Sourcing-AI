@@ -81,16 +81,6 @@ function Navigation() {
             >
               Startup Analysis
             </Link>
-            <Link
-              to="/search"
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/search')
-                  ? 'bg-gray-100 text-gray-800'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-              }`}
-            >
-              Search
-            </Link>
             {user ? (
               <div className="flex items-center gap-4">
                 <span className="text-sm text-gray-700">{user.name || user.email}</span>
@@ -180,16 +170,6 @@ function Navigation() {
             }`}
           >
             Startup Analysis
-          </Link>
-          <Link
-            to="/search"
-            className={`block px-3 py-2 rounded-lg text-base font-medium ${
-              isActive('/search')
-                ? 'bg-gray-100 text-gray-800'
-                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-            }`}
-          >
-            Search
           </Link>
             {user ? (
               <>

@@ -44,14 +44,12 @@ cd backend
 pip install -r requirements.txt
 ```
 
-3. **No installation needed!** The app uses Hugging Face Inference API (free, cloud-based, no disk space required).
-
-4. (Optional) Get a free Hugging Face API key for better performance:
-   - Sign up at: https://huggingface.co/join
-   - Get your token at: https://huggingface.co/settings/tokens
+3. **Get a Groq API key:**
+   - Sign up at: https://console.groq.com/
+   - Get your API key from: https://console.groq.com/keys
    - Create `.env` file in `backend` folder:
      ```env
-     HF_API_KEY=your-token-here
+     GROQ_API_KEY=your-groq-api-key-here
      ```
 
 5. Start the server:
@@ -66,14 +64,14 @@ The backend API will be available at `http://localhost:8000`
 - ChatGPT-like chat interface with message bubbles
 - Left sidebar with conversation history
 - Responsive design (mobile-friendly)
-- FastAPI backend with Hugging Face (free, cloud AI) integration
+- FastAPI backend with Groq API integration
 - Rate limiting (5 requests per user per hour)
 - CORS configured for frontend-backend communication
 
 ## API Endpoints
 
 - `GET /health` - Health check
-- `POST /api/chat` - Send chat message (Hugging Face-powered, rate limited)
+- `POST /api/chat` - Send chat message (Groq-powered, rate limited)
 - `GET /api/history` - Get conversation history (mock data)
 - `POST /api/history` - Create new conversation (placeholder)
 
@@ -98,7 +96,7 @@ Once the backend is running:
 ### Quick Summary:
 - **Frontend**: Deploy to [Vercel](https://vercel.com) (free, auto-deploys on push)
 - **Backend**: Deploy to [Render.com](https://render.com) (free tier, auto-deploys on push)
-- **AI**: Uses Ollama (free, local) - no API keys needed!
+- **AI**: Uses Groq API - fast inference with high-quality models!
 - **Auto-Deploy**: Every `git push` automatically deploys your changes
 
 ### Why This Setup?
@@ -112,11 +110,8 @@ See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions!
 ## Environment Variables
 
 ### Backend (.env)
-- `AI_PROVIDER` (optional, default: `huggingface`) - Choose "huggingface" or "ollama"
-- `HF_API_KEY` (optional) - Hugging Face API token (free, recommended)
-- `HF_API_URL` (optional) - Hugging Face model URL
-- `OLLAMA_BASE_URL` (optional) - Ollama server URL (if using Ollama)
-- `OLLAMA_MODEL` (optional) - Model to use (if using Ollama)
+- `GROQ_API_KEY` (required) - Your Groq API key from https://console.groq.com/keys
+- `GROQ_MODEL` (optional, default: `llama-3.3-70b-versatile`) - Groq model to use
 - `ALLOWED_ORIGINS` (optional) - Comma-separated CORS origins
 
 ### Frontend (.env)
@@ -124,9 +119,8 @@ See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions!
 
 ## Important Notes
 
-- **Hugging Face**: Free cloud-based AI - no installation or disk space needed!
-- **Free API Key**: Optional but recommended - sign up at https://huggingface.co for better performance
+- **Groq API**: Fast inference with high-quality models - get your API key at https://console.groq.com/keys
+- **API Key**: Required - sign up at https://console.groq.com/ to get your free API key
 - **Rate Limiting**: Users are limited to 5 requests per hour (per IP address)
 - **CORS**: Update `ALLOWED_ORIGINS` in production to include your frontend URL
 - **System Prompt**: The AI is configured as a professional VC analyst focused on innovative and profitable products
-- **First Request**: Free tier models may take 20-30 seconds on first request (they "wake up" from sleep)

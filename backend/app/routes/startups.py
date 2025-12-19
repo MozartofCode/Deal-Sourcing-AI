@@ -13,9 +13,19 @@ class StartupSearchRequest(BaseModel):
     stage: Optional[str] = None
 
 
+class PortfolioStartupInfo(BaseModel):
+    id: int
+    startup_name: str
+    industry: Optional[str] = None
+    stage: Optional[str] = None
+    notes: Optional[str] = None
+
+
 class StartupAnalysisRequest(BaseModel):
     startup_name: str
-    analysis_type: str = "comprehensive"  # comprehensive, ip, financials, team, market
+    analysis_types: List[str] = ["comprehensive"]  # List of: comprehensive, ip, financials, team, market
+    custom_query: Optional[str] = None
+    portfolio_startup: Optional[PortfolioStartupInfo] = None
 
 
 class SearchRequest(BaseModel):
@@ -42,7 +52,7 @@ def get_user_id(request: Request) -> str:
 @router.post("/discover")
 async def discover_startups(request: StartupSearchRequest, http_request: Request):
     """
-    Discover startups using Ollama (free AI) to generate search results
+    Discover startups using Groq API to generate search results
     """
     user_id = get_user_id(http_request)
     
@@ -96,7 +106,8 @@ Format the response as a clear list with these details for each startup."""
 @router.post("/analyze")
 async def analyze_startup(request: StartupAnalysisRequest, http_request: Request):
     """
-    Analyze a startup using Ollama (free AI) - IP, financials, team, market position
+    Analyze a startup using Groq API - IP, financials, team, market position
+    Supports multiple analysis types, custom queries, and portfolio startup info
     """
     user_id = get_user_id(http_request)
     
@@ -115,59 +126,93 @@ async def analyze_startup(request: StartupAnalysisRequest, http_request: Request
     if not request.startup_name or not request.startup_name.strip():
         raise HTTPException(status_code=400, detail="Startup name cannot be empty")
     
+    if not request.analysis_types or len(request.analysis_types) == 0:
+        raise HTTPException(status_code=400, detail="At least one analysis type must be selected")
+    
     try:
-        # Build analysis prompt based on type
-        analysis_prompts = {
-            "comprehensive": f"""Provide a comprehensive analysis of {request.startup_name}. Include:
-1. Company Overview - brief description, business model, value proposition
-2. Intellectual Property - patents, trademarks, proprietary technology
-3. Financial Health - funding rounds, revenue estimates, growth metrics, unit economics
-4. Founding Team - key members, backgrounds, experience
-5. Market Position - competitive landscape, market size, differentiation
-
-Be detailed and data-driven.""",
+        # Build portfolio context if provided
+        portfolio_context = ""
+        if request.portfolio_startup:
+            portfolio_context = f"""
             
-            "ip": f"""Analyze the intellectual property portfolio of {request.startup_name}. Include:
-- Number of patents (active and pending)
-- Key patent areas/technologies
-- Trademarks and brand protection
-- Proprietary technology or trade secrets
-- IP strategy and competitive advantages""",
-            
-            "financials": f"""Analyze the financial metrics of {request.startup_name}. Include:
-- Funding rounds and amounts raised
-- Revenue estimates (ARR if available)
-- Growth rate (YoY)
-- Unit economics (CAC, LTV, margins)
-- Burn rate and runway
-- Valuation estimates if known""",
-            
-            "team": f"""Analyze the founding team of {request.startup_name}. Include:
-- Key team members and their roles
-- Professional backgrounds and previous experience
-- Education and expertise
-- Track record and achievements
-- Team composition and gaps""",
-            
-            "market": f"""Analyze the market position of {request.startup_name}. Include:
-- Target market size (TAM, SAM, SOM)
-- Competitive landscape and key competitors
-- Market share and positioning
-- Competitive advantages and differentiation
-- Market trends and opportunities"""
-        }
+PORTFOLIO CONTEXT (from user's saved portfolio):
+- Startup Name: {request.portfolio_startup.startup_name}
+- Industry: {request.portfolio_startup.industry or 'Not specified'}
+- Stage: {request.portfolio_startup.stage or 'Not specified'}
+- User Notes: {request.portfolio_startup.notes or 'No notes provided'}
+"""
         
-        prompt = analysis_prompts.get(
-            request.analysis_type, 
-            analysis_prompts["comprehensive"]
-        )
+        # Build analysis sections based on selected types
+        analysis_sections = []
+        
+        if "comprehensive" in request.analysis_types:
+            analysis_sections.append("""
+1. COMPANY OVERVIEW
+   - Brief description, business model, value proposition
+   - Key products/services
+   - Target customers
+""")
+        
+        if "ip" in request.analysis_types:
+            analysis_sections.append("""
+2. INTELLECTUAL PROPERTY PORTFOLIO
+   - Number of patents (active and pending)
+   - Key patent areas/technologies
+   - Trademarks and brand protection
+   - Proprietary technology or trade secrets
+   - IP strategy and competitive advantages
+""")
+        
+        if "financials" in request.analysis_types:
+            analysis_sections.append("""
+3. FINANCIAL METRICS
+   - Funding rounds and amounts raised
+   - Revenue estimates (ARR if available)
+   - Growth rate (YoY)
+   - Unit economics (CAC, LTV, margins)
+   - Burn rate and runway
+   - Valuation estimates if known
+""")
+        
+        if "team" in request.analysis_types:
+            analysis_sections.append("""
+4. FOUNDING TEAM
+   - Key team members and their roles
+   - Professional backgrounds and previous experience
+   - Education and expertise
+   - Track record and achievements
+   - Team composition and gaps
+""")
+        
+        if "market" in request.analysis_types:
+            analysis_sections.append("""
+5. MARKET POSITION
+   - Target market size (TAM, SAM, SOM)
+   - Competitive landscape and key competitors
+   - Market share and positioning
+   - Competitive advantages and differentiation
+   - Market trends and opportunities
+""")
+        
+        # Build the main prompt
+        sections_text = "\n".join(analysis_sections)
+        
+        prompt = f"""As a VC analyst, provide a detailed analysis of {request.startup_name}.{portfolio_context}
+
+Please provide the following analysis:{sections_text}
+
+Be detailed, data-driven, and provide actionable insights."""
+        
+        # Add custom query if provided
+        if request.custom_query and request.custom_query.strip():
+            prompt += f"\n\nADDITIONAL QUESTION FROM USER:\n{request.custom_query}\n\nPlease address this specific question in your analysis."
         
         response_message = await get_openai_response(prompt)
         
         return {
             "analysis": response_message,
             "startup_name": request.startup_name,
-            "analysis_type": request.analysis_type,
+            "analysis_types": request.analysis_types,
             "remaining_requests": remaining
         }
     except ValueError as e:
@@ -179,7 +224,7 @@ Be detailed and data-driven.""",
 @router.post("/search")
 async def search(request: SearchRequest, http_request: Request):
     """
-    General search across startups, founders, technologies, and markets using Ollama (free AI)
+    General search across startups, founders, technologies, and markets using Groq API
     """
     user_id = get_user_id(http_request)
     

@@ -71,11 +71,27 @@ export const discoverStartups = async (query, industry = null, stage = null) => 
   return response.data
 }
 
-export const analyzeStartup = async (startupName, analysisType = 'comprehensive') => {
-  const response = await api.post('/api/analyze', {
+export const analyzeStartup = async (startupName, analysisTypes = ['comprehensive'], customQuery = undefined, portfolioStartup = undefined) => {
+  const payload = {
     startup_name: startupName,
-    analysis_type: analysisType,
-  })
+    analysis_types: Array.isArray(analysisTypes) ? analysisTypes : [analysisTypes],
+  }
+  
+  if (customQuery) {
+    payload.custom_query = customQuery
+  }
+  
+  if (portfolioStartup) {
+    payload.portfolio_startup = {
+      id: portfolioStartup.id,
+      startup_name: portfolioStartup.startup_name,
+      industry: portfolioStartup.industry,
+      stage: portfolioStartup.stage,
+      notes: portfolioStartup.notes,
+    }
+  }
+  
+  const response = await api.post('/api/analyze', payload)
   return response.data
 }
 

@@ -6,7 +6,6 @@ import Home from './pages/Home'
 import DiscoverStartups from './pages/DiscoverStartups'
 import Portfolio from './pages/Portfolio'
 import StartupAnalysis from './pages/StartupAnalysis'
-import Search from './pages/Search'
 import Chat from './pages/Chat'
 import Login from './pages/Login'
 
@@ -40,14 +39,6 @@ function App() {
               element={
                 <ProtectedRoute>
                   <StartupAnalysis />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/search"
-              element={
-                <ProtectedRoute>
-                  <Search />
                 </ProtectedRoute>
               }
             />

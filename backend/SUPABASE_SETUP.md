@@ -41,8 +41,8 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 # JWT Secret (generate a random string)
 JWT_SECRET_KEY=your-random-secret-key-change-this-in-production
 
-# OpenAI (existing)
-OPENAI_API_KEY=your-openai-key
+# Groq API (required for AI features)
+GROQ_API_KEY=your-groq-api-key-here
 
 # CORS (existing)
 ALLOWED_ORIGINS=http://localhost:3000

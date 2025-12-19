@@ -1,35 +1,32 @@
 # Deal Sourcing AI - Backend
 
-FastAPI backend for the Deal Sourcing AI application with Ollama (free, local AI) integration.
+FastAPI backend for the Deal Sourcing AI application with Groq API integration.
 
 ## Setup
 
-1. **No installation needed!** The app uses Hugging Face Inference API by default (free, cloud-based, no disk space required).
+1. **Get a Groq API key:**
+   - Sign up at: https://console.groq.com/
+   - Get your API key from: https://console.groq.com/keys
+   - Add to `.env`: `GROQ_API_KEY=your-groq-api-key-here`
 
-2. (Optional) Get a free Hugging Face API key for better performance:
-   - Sign up at: https://huggingface.co/join
-   - Get your token at: https://huggingface.co/settings/tokens
-   - Add to `.env`: `HF_API_KEY=your-token-here`
-
-3. Install Python dependencies:
+2. Install Python dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-4. (Optional) Create a `.env` file in the backend directory to customize:
+3. Create a `.env` file in the backend directory:
 ```env
-# Use Hugging Face (default, no installation needed)
-AI_PROVIDER=huggingface
-HF_API_URL=https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2
-HF_API_KEY=your-huggingface-token-here  # Optional but recommended
+# Groq API Configuration (required)
+GROQ_API_KEY=your-groq-api-key-here
 
-# OR use Ollama (if you have it installed locally)
-# AI_PROVIDER=ollama
-# OLLAMA_BASE_URL=http://localhost:11434
-# OLLAMA_MODEL=llama3.2
+# Optional: Customize Groq model (default: llama-3.3-70b-versatile)
+GROQ_MODEL=llama-3.3-70b-versatile
+
+# CORS Configuration
+ALLOWED_ORIGINS=http://localhost:3000
 ```
 
-**Note**: Hugging Face is free and requires no installation or disk space!
+**Note**: Groq API provides fast inference with high-quality models!
 
 ## Running the Server
 
@@ -43,7 +40,7 @@ The API will be available at `http://localhost:8000`
 ## API Endpoints
 
 - `GET /health` - Health check endpoint
-- `POST /api/chat` - Send a chat message (Hugging Face-powered, rate limited to 5 requests per user per hour)
+- `POST /api/chat` - Send a chat message (Groq-powered, rate limited to 5 requests per user per hour)
 - `GET /api/history` - Get conversation history (mock data)
 - `POST /api/history` - Create a new conversation (placeholder)
 
@@ -61,14 +58,10 @@ Once the server is running, you can access:
 
 ## Environment Variables
 
-- `AI_PROVIDER` (optional, default: `huggingface`) - Choose "huggingface" or "ollama"
-- `HF_API_URL` (optional) - Hugging Face model URL
-- `HF_API_KEY` (optional) - Hugging Face API token (free tier, recommended for better performance)
-- `OLLAMA_BASE_URL` (optional, default: `http://localhost:11434`) - Ollama server URL (if using Ollama)
-- `OLLAMA_MODEL` (optional, default: `llama3.2`) - Model to use (if using Ollama)
+- `GROQ_API_KEY` (required) - Your Groq API key from https://console.groq.com/keys
+- `GROQ_MODEL` (optional, default: `llama-3.3-70b-versatile`) - Groq model to use
 - `ALLOWED_ORIGINS` (optional) - Comma-separated list of allowed CORS origins
 
 ## Deployment
 
 See deployment instructions in the main README.md
-
