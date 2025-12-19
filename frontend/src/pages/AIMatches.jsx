@@ -99,7 +99,9 @@ function AIMatches() {
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-2">AI-Powered Matches</h1>
               <p className="text-gray-600">
-                Discover {user?.user_type === 'entrepreneur' ? 'investors' : 'startups'} that match your profile
+                {user?.user_type === 'entrepreneur' 
+                  ? 'Discover investors and VCs that match your startup profile'
+                  : 'Discover entrepreneurs and startups that match your investment criteria'}
               </p>
             </div>
             <button
