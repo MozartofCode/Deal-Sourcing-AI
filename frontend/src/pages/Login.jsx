@@ -39,22 +39,44 @@ function Login() {
       // Redirect to the page they were trying to access, or home if none
       navigate(from, { replace: true })
     } catch (err) {
-      // Better error handling - show more details for debugging
-      let errorMsg = 'Authentication failed'
+      // Enhanced error handling with clear, user-friendly messages
+      let errorMsg = 'Authentication failed. Please try again.'
+      
+      // Check for specific error messages from backend
       if (err.response?.data?.detail) {
         errorMsg = err.response.data.detail
       } else if (err.response?.data?.message) {
         errorMsg = err.response.data.message
       } else if (err.message) {
-        errorMsg = err.message
+        // Handle network errors
+        if (err.message.includes('Network Error') || err.message.includes('Failed to fetch')) {
+          errorMsg = 'Unable to connect to the server. Please check your internet connection and try again.'
+        } else {
+          errorMsg = err.message
+        }
       }
-      // Log full error for debugging
-      console.error('Registration error:', {
-        message: errorMsg,
-        status: err.response?.status,
-        data: err.response?.data,
-        fullError: err
-      })
+      
+      // Handle HTTP status codes
+      if (err.response?.status === 401) {
+        errorMsg = errorMsg || 'Incorrect email or password. Please try again.'
+      } else if (err.response?.status === 400) {
+        errorMsg = errorMsg || 'Invalid information provided. Please check your details and try again.'
+      } else if (err.response?.status === 500) {
+        errorMsg = 'Server error. Please try again in a moment.'
+      } else if (err.response?.status >= 500) {
+        errorMsg = 'Server error. Please try again later.'
+      }
+      
+      // Log full error for debugging (only in development)
+      if (import.meta.env.DEV) {
+        console.error(`${isLogin ? 'Login' : 'Registration'} error:`, {
+          message: errorMsg,
+          status: err.response?.status,
+          data: err.response?.data,
+          fullError: err
+        })
+      }
+      
       setError(errorMsg)
     } finally {
       setLoading(false)

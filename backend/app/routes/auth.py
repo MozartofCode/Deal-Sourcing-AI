@@ -50,6 +50,7 @@ async def register(user_data: UserCreate):
         expires_delta=access_token_expires
     )
     
+    logger.info(f"Successful registration for user: {user_data.email}")
     return {
         "access_token": access_token,
         "token_type": "bearer",
@@ -62,12 +63,17 @@ async def login(user_data: UserLogin):
     """
     Login user and return JWT token
     """
-    user = await authenticate_user(user_data.email, user_data.password)
+    logger.info(f"Login attempt for email: {user_data.email}")
+    
+    user, error_message = await authenticate_user(user_data.email, user_data.password)
     
     if user is None:
+        # Use the specific error message from auth service, or default message
+        final_error = error_message if error_message else "Incorrect email or password"
+        logger.warning(f"Login failed for {user_data.email}: {final_error}")
         raise HTTPException(
             status_code=401,
-            detail="Incorrect email or password",
+            detail=final_error,
             headers={"WWW-Authenticate": "Bearer"},
         )
     
@@ -78,6 +84,7 @@ async def login(user_data: UserLogin):
         expires_delta=access_token_expires
     )
     
+    logger.info(f"Successful login for user: {user_data.email}")
     return {
         "access_token": access_token,
         "token_type": "bearer",
