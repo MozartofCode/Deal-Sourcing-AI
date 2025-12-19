@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { discoverStartups } from '../services/api'
+import { useState, useEffect } from 'react'
+import { discoverStartups, saveSearchHistory, trackProfileView, saveItem, getSavedItems } from '../services/api'
 
 function DiscoverStartups() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -8,6 +8,20 @@ function DiscoverStartups() {
   const [isSearching, setIsSearching] = useState(false)
   const [searchResults, setSearchResults] = useState(null)
   const [error, setError] = useState(null)
+  const [savedItems, setSavedItems] = useState([])
+
+  useEffect(() => {
+    loadSavedItems()
+  }, [])
+
+  const loadSavedItems = async () => {
+    try {
+      const saved = await getSavedItems('startup')
+      setSavedItems(saved.map(item => item.item_id))
+    } catch (error) {
+      console.error('Failed to load saved items:', error)
+    }
+  }
 
   const industries = [
     'All Industries',
@@ -32,11 +46,42 @@ function DiscoverStartups() {
     try {
       const result = await discoverStartups(searchQuery, selectedIndustry, selectedStage)
       setSearchResults(result.results)
+      
+      // Auto-save search
+      try {
+        await saveSearchHistory('startup', searchQuery, {
+          industry: selectedIndustry,
+          stage: selectedStage
+        }, result.results ? 1 : 0)
+      } catch (err) {
+        console.error('Failed to save search:', err)
+      }
     } catch (err) {
       setError(err.response?.data?.detail || err.message || 'Failed to search startups')
       console.error('Search error:', err)
     } finally {
       setIsSearching(false)
+    }
+  }
+
+  const handleSaveItem = async (startup) => {
+    try {
+      await saveItem('startup', startup.id.toString(), startup.name, startup)
+      alert('Startup saved!')
+      // Reload saved items
+      const saved = await getSavedItems('startup')
+      setSavedItems(saved.map(item => item.item_id))
+    } catch (error) {
+      console.error('Failed to save:', error)
+      alert('Failed to save startup')
+    }
+  }
+
+  const handleViewStartup = async (startup) => {
+    try {
+      await trackProfileView('startup', startup.id.toString(), startup.name, startup)
+    } catch (error) {
+      console.error('Failed to track view:', error)
     }
   }
 
@@ -291,11 +336,21 @@ function DiscoverStartups() {
               </div>
 
               <div className="flex gap-2">
-                <button className="flex-1 px-4 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors">
+                <button 
+                  onClick={() => handleViewStartup(startup)}
+                  className="flex-1 px-4 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors"
+                >
                   View Details
                 </button>
-                <button className="px-4 py-2 border border-gray-800 text-gray-800 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-                  Save
+                <button 
+                  onClick={() => handleSaveItem(startup)}
+                  className={`px-4 py-2 border rounded-lg font-medium transition-colors ${
+                    savedItems.includes(startup.id.toString())
+                      ? 'bg-gray-800 text-white border-gray-800'
+                      : 'border-gray-800 text-gray-800 hover:bg-gray-50'
+                  }`}
+                >
+                  {savedItems.includes(startup.id.toString()) ? 'Saved' : 'Save'}
                 </button>
               </div>
             </div>

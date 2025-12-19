@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { discoverStartups } from '../services/api'
+import { useState, useEffect } from 'react'
+import { discoverStartups, saveSearchHistory, trackProfileView, saveItem, getSavedItems } from '../services/api'
 
 function DiscoverVCs() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -8,6 +8,20 @@ function DiscoverVCs() {
   const [isSearching, setIsSearching] = useState(false)
   const [searchResults, setSearchResults] = useState(null)
   const [error, setError] = useState(null)
+  const [savedItems, setSavedItems] = useState([])
+
+  useEffect(() => {
+    loadSavedItems()
+  }, [])
+
+  const loadSavedItems = async () => {
+    try {
+      const saved = await getSavedItems('vc')
+      setSavedItems(saved.map(item => item.item_id))
+    } catch (error) {
+      console.error('Failed to load saved items:', error)
+    }
+  }
 
   const industries = [
     'All Industries',
@@ -33,11 +47,42 @@ function DiscoverVCs() {
       // For now, using the same API but with different context
       const result = await discoverStartups(`VCs and investors interested in: ${searchQuery}`, selectedIndustry, selectedStage)
       setSearchResults(result.results)
+      
+      // Auto-save search
+      try {
+        await saveSearchHistory('vc', searchQuery, {
+          industry: selectedIndustry,
+          stage: selectedStage
+        }, result.results ? 1 : 0)
+      } catch (err) {
+        console.error('Failed to save search:', err)
+      }
     } catch (err) {
       setError(err.response?.data?.detail || err.message || 'Failed to search VCs')
       console.error('Search error:', err)
     } finally {
       setIsSearching(false)
+    }
+  }
+
+  const handleSaveItem = async (vc) => {
+    try {
+      await saveItem('vc', vc.id.toString(), vc.name, vc)
+      alert('VC saved!')
+      // Reload saved items
+      const saved = await getSavedItems('vc')
+      setSavedItems(saved.map(item => item.item_id))
+    } catch (error) {
+      console.error('Failed to save:', error)
+      alert('Failed to save VC')
+    }
+  }
+
+  const handleViewVC = async (vc) => {
+    try {
+      await trackProfileView('vc', vc.id.toString(), vc.name, vc)
+    } catch (error) {
+      console.error('Failed to track view:', error)
     }
   }
 
@@ -295,11 +340,21 @@ function DiscoverVCs() {
                   </div>
 
                   <div className="flex gap-2">
-                    <button className="flex-1 px-4 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors">
+                    <button 
+                      onClick={() => handleViewVC(vc)}
+                      className="flex-1 px-4 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors"
+                    >
                       View Profile
                     </button>
-                    <button className="px-4 py-2 border border-gray-800 text-gray-800 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-                      Save
+                    <button 
+                      onClick={() => handleSaveItem(vc)}
+                      className={`px-4 py-2 border rounded-lg font-medium transition-colors ${
+                        savedItems.includes(vc.id.toString())
+                          ? 'bg-gray-800 text-white border-gray-800'
+                          : 'border-gray-800 text-gray-800 hover:bg-gray-50'
+                      }`}
+                    >
+                      {savedItems.includes(vc.id.toString()) ? 'Saved' : 'Save'}
                     </button>
                   </div>
                 </div>

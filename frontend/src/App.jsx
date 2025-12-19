@@ -11,6 +11,8 @@ import Fundraising from './pages/Fundraising'
 import Chat from './pages/Chat'
 import Login from './pages/Login'
 import AIMatches from './pages/AIMatches'
+import Messages from './pages/Messages'
+import Profile from './pages/Profile'
 
 function App() {
   return (
@@ -74,6 +76,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AIMatches />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/messages"
+              element={
+                <ProtectedRoute>
+                  <Messages />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile/:userId"
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             />

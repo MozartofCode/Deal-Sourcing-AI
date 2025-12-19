@@ -116,6 +116,26 @@ function Navigation() {
             >
               AI Matches
             </Link>
+            <Link
+              to="/messages"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive('/messages')
+                  ? 'bg-gray-100 text-gray-800'
+                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+              }`}
+            >
+              Messages
+            </Link>
+            <Link
+              to="/profile"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive('/profile')
+                  ? 'bg-gray-100 text-gray-800'
+                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+              }`}
+            >
+              Profile
+            </Link>
               </>
             )}
             {user ? (
@@ -242,6 +262,26 @@ function Navigation() {
                 }`}
               >
                 AI Matches
+              </Link>
+              <Link
+                to="/messages"
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${
+                  isActive('/messages')
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                }`}
+              >
+                Messages
+              </Link>
+              <Link
+                to="/profile"
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${
+                  isActive('/profile')
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                }`}
+              >
+                Profile
               </Link>
             </>
           )}

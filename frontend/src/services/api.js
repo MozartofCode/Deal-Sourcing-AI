@@ -292,9 +292,7 @@ export const getConnectionRequests = async (status = null) => {
 }
 
 export const updateConnectionRequest = async (requestId, status) => {
-  const response = await api.put(`/api/messaging/connection-requests/${requestId}`, null, {
-    params: { status },
-  })
+  const response = await api.put(`/api/messaging/connection-requests/${requestId}?status=${status}`)
   return response.data
 }
 
@@ -311,9 +309,7 @@ export const getAIMatches = async (status = null) => {
 }
 
 export const updateMatchStatus = async (matchId, status) => {
-  const response = await api.put(`/api/ai/matches/${matchId}`, null, {
-    params: { status },
-  })
+  const response = await api.put(`/api/ai/matches/${matchId}?status=${status}`)
   return response.data
 }
 
