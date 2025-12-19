@@ -75,6 +75,7 @@ async def authenticate_user(email: str, password: str) -> Tuple[Optional[dict], 
         # Get user metadata (name might be stored in user_metadata or raw_user_meta_data)
         user_metadata = user.user_metadata or {}
         name = user_metadata.get("name") or user_metadata.get("full_name")
+        user_type = user_metadata.get("user_type")
         
         # Get created_at from user object
         created_at_str = user.created_at
@@ -91,6 +92,7 @@ async def authenticate_user(email: str, password: str) -> Tuple[Optional[dict], 
             "id": user.id,
             "email": user.email or email,
             "name": name,
+            "user_type": user_type,
             "created_at": created_at
         }, None
         
@@ -113,7 +115,7 @@ async def authenticate_user(email: str, password: str) -> Tuple[Optional[dict], 
             return None, "Unable to sign in. Please check your credentials and try again"
 
 
-async def create_user(email: str, password: str, name: Optional[str] = None) -> Tuple[Optional[dict], Optional[str]]:
+async def create_user(email: str, password: str, name: Optional[str] = None, user_type: Optional[str] = None) -> Tuple[Optional[dict], Optional[str]]:
     """
     Create a new user using Supabase Auth API
     Password hashing is handled automatically by Supabase
@@ -129,11 +131,17 @@ async def create_user(email: str, password: str, name: Optional[str] = None) -> 
         if not password or len(password) < 6:
             return None, "Password must be at least 6 characters long"
         
+        # Validate user_type
+        if user_type and user_type not in ["entrepreneur", "investor"]:
+            return None, "Invalid user type. Must be 'entrepreneur' or 'investor'"
+        
         # Prepare user metadata
         user_metadata = {}
         if name:
             user_metadata["name"] = name
             user_metadata["full_name"] = name
+        if user_type:
+            user_metadata["user_type"] = user_type
         
         # Use Supabase Auth API to sign up (handles password hashing automatically)
         auth_response = supabase.auth.sign_up({
@@ -168,6 +176,7 @@ async def create_user(email: str, password: str, name: Optional[str] = None) -> 
         # Get user metadata
         user_metadata = user.user_metadata or {}
         name = user_metadata.get("name") or user_metadata.get("full_name")
+        user_type = user_metadata.get("user_type")
         
         # Get created_at from user object
         created_at_str = user.created_at
@@ -184,6 +193,7 @@ async def create_user(email: str, password: str, name: Optional[str] = None) -> 
             "id": user.id,
             "email": user.email or email,
             "name": name,
+            "user_type": user_type,
             "created_at": created_at
         }, None
         
@@ -226,6 +236,7 @@ async def get_user_by_id(user_id: str) -> Optional[dict]:
         user = admin_response.user
         user_metadata = user.user_metadata or {}
         name = user_metadata.get("name") or user_metadata.get("full_name")
+        user_type = user_metadata.get("user_type")
         
         # Get created_at
         created_at_str = user.created_at
@@ -241,6 +252,7 @@ async def get_user_by_id(user_id: str) -> Optional[dict]:
             "id": user.id,
             "email": user.email,
             "name": name,
+            "user_type": user_type,
             "created_at": created_at
         }
     except Exception as e:

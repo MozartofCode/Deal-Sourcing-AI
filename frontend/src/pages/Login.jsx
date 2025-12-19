@@ -8,6 +8,7 @@ function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
+  const [userType, setUserType] = useState('') // 'entrepreneur' or 'investor'
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -32,7 +33,12 @@ function Login() {
           setLoading(false)
           return
         }
-        response = await register(email, password, name)
+        if (!userType) {
+          setError('Please select whether you are an entrepreneur or investor')
+          setLoading(false)
+          return
+        }
+        response = await register(email, password, name, userType)
       }
 
       setUser(response.user)
@@ -115,19 +121,58 @@ function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
-                  placeholder="Your name"
-                  required={!isLogin}
-                />
-              </div>
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
+                    placeholder="Your name"
+                    required={!isLogin}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    I am...
+                  </label>
+                  <div className="space-y-2">
+                    <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                      <input
+                        type="radio"
+                        name="userType"
+                        value="entrepreneur"
+                        checked={userType === 'entrepreneur'}
+                        onChange={(e) => setUserType(e.target.value)}
+                        className="mr-3"
+                        required={!isLogin}
+                      />
+                      <div>
+                        <div className="font-medium text-gray-900">An entrepreneur looking to raise funds</div>
+                        <div className="text-sm text-gray-500">Find investors and VCs for your startup</div>
+                      </div>
+                    </label>
+                    <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                      <input
+                        type="radio"
+                        name="userType"
+                        value="investor"
+                        checked={userType === 'investor'}
+                        onChange={(e) => setUserType(e.target.value)}
+                        className="mr-3"
+                        required={!isLogin}
+                      />
+                      <div>
+                        <div className="font-medium text-gray-900">An investor looking to invest in the next generation of entrepreneurs</div>
+                        <div className="text-sm text-gray-500">Discover and analyze startups</div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </>
             )}
 
             <div>
@@ -173,6 +218,7 @@ function Login() {
               onClick={() => {
                 setIsLogin(!isLogin)
                 setError('')
+                setUserType('') // Reset user type when switching
               }}
               className="text-gray-700 hover:text-gray-900 font-medium"
             >

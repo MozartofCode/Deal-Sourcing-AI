@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { analyzeStartup, getPortfolio } from '../services/api'
 
 function StartupAnalysis() {
-  const [startupName, setStartupName] = useState('')
   const [selectedStartupId, setSelectedStartupId] = useState('')
   const [portfolioStartups, setPortfolioStartups] = useState([])
   const [selectedAnalysisTypes, setSelectedAnalysisTypes] = useState(['comprehensive'])
@@ -48,29 +47,23 @@ function StartupAnalysis() {
 
   const handleStartupSelect = (startupId) => {
     setSelectedStartupId(startupId)
-    if (startupId) {
-      const selected = portfolioStartups.find(s => s.id === parseInt(startupId))
-      if (selected) {
-        setStartupName(selected.startup_name)
-      }
-    } else {
-      setStartupName('')
-    }
   }
 
   const handleAnalyze = async () => {
-    // Either startup name or selected startup ID must be provided
-    if (!startupName.trim() && !selectedStartupId) return
+    // Selected startup ID must be provided
+    if (!selectedStartupId) return
     if (selectedAnalysisTypes.length === 0) return
 
     setIsAnalyzing(true)
     setAnalysisResult(null)
     
-    const selectedStartup = selectedStartupId 
-      ? portfolioStartups.find(s => s.id === parseInt(selectedStartupId))
-      : null
+    const selectedStartup = portfolioStartups.find(s => s.id === parseInt(selectedStartupId))
+    if (!selectedStartup) {
+      setIsAnalyzing(false)
+      return
+    }
     
-    const finalStartupName = startupName.trim() || selectedStartup?.startup_name || ''
+    const finalStartupName = selectedStartup.startup_name
     
     try {
       const result = await analyzeStartup(
@@ -99,7 +92,7 @@ function StartupAnalysis() {
   }
 
   const canAnalyze = () => {
-    return (startupName.trim() || selectedStartupId) && selectedAnalysisTypes.length > 0
+    return selectedStartupId && selectedAnalysisTypes.length > 0
   }
 
   return (
@@ -118,7 +111,7 @@ function StartupAnalysis() {
             {/* Portfolio Startup Selection */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select from Portfolio (Optional)
+                Select Startup from Portfolio
               </label>
               <select
                 value={selectedStartupId}
@@ -140,27 +133,20 @@ function StartupAnalysis() {
               )}
             </div>
 
-            {/* Startup Name Input */}
+            {/* Custom Query/Question */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Startup Name {selectedStartupId ? '(or enter a different startup)' : ''}
+                Custom Question
               </label>
-              <input
-                type="text"
-                value={startupName}
-                onChange={(e) => {
-                  setStartupName(e.target.value)
-                  if (e.target.value) {
-                    setSelectedStartupId('') // Clear portfolio selection if typing manually
-                  }
-                }}
-                placeholder="Enter startup name or company..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
+              <textarea
+                value={customQuery}
+                onChange={(e) => setCustomQuery(e.target.value)}
+                placeholder="Ask a specific question about this startup (e.g., 'What are the main risks?', 'How does their pricing compare to competitors?')"
+                rows={3}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 resize-none"
               />
               <p className="mt-1 text-sm text-gray-500">
-                {selectedStartupId 
-                  ? 'You can override the portfolio selection by entering a different startup name'
-                  : 'Enter any startup name to analyze, or select one from your portfolio above'}
+                Ask specific questions to get targeted insights about the selected startup
               </p>
             </div>
 
@@ -190,23 +176,6 @@ function StartupAnalysis() {
               </div>
               <p className="mt-2 text-sm text-gray-500">
                 Selected: {selectedAnalysisTypes.length} type{selectedAnalysisTypes.length !== 1 ? 's' : ''}
-              </p>
-            </div>
-
-            {/* Custom Query/Question */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Custom Question (Optional)
-              </label>
-              <textarea
-                value={customQuery}
-                onChange={(e) => setCustomQuery(e.target.value)}
-                placeholder="Ask a specific question about this startup (e.g., 'What are the main risks?', 'How does their pricing compare to competitors?')"
-                rows={3}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 resize-none"
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                Ask specific questions to get targeted insights about the selected startup
               </p>
             </div>
 
@@ -294,7 +263,7 @@ function StartupAnalysis() {
             </svg>
             <p className="text-gray-500 text-lg mb-2">Ready to analyze</p>
             <p className="text-gray-400 text-sm">
-              Select a startup from your portfolio, enter a startup name, choose analysis types, and optionally ask a question
+              Select a startup from your portfolio, choose analysis types, and ask a question
             </p>
           </div>
         )}

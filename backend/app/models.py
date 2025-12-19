@@ -15,16 +15,23 @@ class PortfolioStatus(str, Enum):
 
 
 # User Models
+class UserType(str, Enum):
+    ENTREPRENEUR = "entrepreneur"
+    INVESTOR = "investor"
+
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
     name: Optional[str] = None
+    user_type: Optional[UserType] = None
 
 
 class UserResponse(BaseModel):
     id: str
     email: str
     name: Optional[str] = None
+    user_type: Optional[str] = None
     created_at: datetime
 
     class Config:

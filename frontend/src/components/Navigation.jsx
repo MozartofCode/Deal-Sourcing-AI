@@ -51,36 +51,63 @@ function Navigation() {
             >
               Home
             </Link>
-            <Link
-              to="/discover"
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/discover')
-                  ? 'bg-gray-100 text-gray-800'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-              }`}
-            >
-              Discover Startups
-            </Link>
-            <Link
-              to="/portfolio"
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/portfolio')
-                  ? 'bg-gray-100 text-gray-800'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-              }`}
-            >
-              My Portfolio
-            </Link>
-            <Link
-              to="/analysis"
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/analysis')
-                  ? 'bg-gray-100 text-gray-800'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-              }`}
-            >
-              Startup Analysis
-            </Link>
+            {user?.user_type === 'entrepreneur' ? (
+              <>
+                <Link
+                  to="/discover-vcs"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive('/discover-vcs')
+                      ? 'bg-gray-100 text-gray-800'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                  }`}
+                >
+                  Discover VCs
+                </Link>
+                <Link
+                  to="/fundraising"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive('/fundraising')
+                      ? 'bg-gray-100 text-gray-800'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                  }`}
+                >
+                  Fundraising
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/discover"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive('/discover')
+                      ? 'bg-gray-100 text-gray-800'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                  }`}
+                >
+                  Discover Startups
+                </Link>
+                <Link
+                  to="/portfolio"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive('/portfolio')
+                      ? 'bg-gray-100 text-gray-800'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                  }`}
+                >
+                  My Portfolio
+                </Link>
+                <Link
+                  to="/analysis"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive('/analysis')
+                      ? 'bg-gray-100 text-gray-800'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                  }`}
+                >
+                  Startup Analysis
+                </Link>
+              </>
+            )}
             {user ? (
               <div className="flex items-center gap-4">
                 <span className="text-sm text-gray-700">{user.name || user.email}</span>
@@ -141,36 +168,63 @@ function Navigation() {
           >
             Home
           </Link>
-          <Link
-            to="/discover"
-            className={`block px-3 py-2 rounded-lg text-base font-medium ${
-              isActive('/discover')
-                ? 'bg-gray-100 text-gray-800'
-                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-            }`}
-          >
-            Discover Startups
-          </Link>
-          <Link
-            to="/portfolio"
-            className={`block px-3 py-2 rounded-lg text-base font-medium ${
-              isActive('/portfolio')
-                ? 'bg-gray-100 text-gray-800'
-                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-            }`}
-          >
-            My Portfolio
-          </Link>
-          <Link
-            to="/analysis"
-            className={`block px-3 py-2 rounded-lg text-base font-medium ${
-              isActive('/analysis')
-                ? 'bg-gray-100 text-gray-800'
-                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-            }`}
-          >
-            Startup Analysis
-          </Link>
+          {user?.user_type === 'entrepreneur' ? (
+            <>
+              <Link
+                to="/discover-vcs"
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${
+                  isActive('/discover-vcs')
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                }`}
+              >
+                Discover VCs
+              </Link>
+              <Link
+                to="/fundraising"
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${
+                  isActive('/fundraising')
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                }`}
+              >
+                Fundraising
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/discover"
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${
+                  isActive('/discover')
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                }`}
+              >
+                Discover Startups
+              </Link>
+              <Link
+                to="/portfolio"
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${
+                  isActive('/portfolio')
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                }`}
+              >
+                My Portfolio
+              </Link>
+              <Link
+                to="/analysis"
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${
+                  isActive('/analysis')
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                }`}
+              >
+                Startup Analysis
+              </Link>
+            </>
+          )}
             {user ? (
               <>
                 <div className="px-3 py-2 text-sm text-gray-700 border-t border-gray-200 mt-2 pt-2">

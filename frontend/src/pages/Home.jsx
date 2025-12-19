@@ -3,7 +3,7 @@ import { useAuth } from '../components/AuthContext'
 
 function Home() {
   const navigate = useNavigate()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
 
   const handleProtectedClick = (path) => {
     if (isAuthenticated) {
@@ -22,22 +22,42 @@ function Home() {
             Welcome to <span className="text-gray-800" style={{ fontFamily: 'serif' }}>Scout</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Your intelligent platform for startup discovery, analysis, and portfolio management.
-            Make data-driven investment decisions with AI-powered insights.
+            {user?.user_type === 'entrepreneur' 
+              ? 'Your intelligent platform for finding investors and raising funds. Connect with VCs and get AI-powered fundraising insights.'
+              : 'Your intelligent platform for startup discovery, analysis, and portfolio management. Make data-driven investment decisions with AI-powered insights.'}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button
-              onClick={() => handleProtectedClick('/discover')}
-              className="px-6 py-3 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors shadow-md"
-            >
-              Discover Startups
-            </button>
-            <button
-              onClick={() => handleProtectedClick('/analysis')}
-              className="px-6 py-3 bg-white text-gray-800 border-2 border-gray-800 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-            >
-              Analyze Startup
-            </button>
+            {user?.user_type === 'entrepreneur' ? (
+              <>
+                <button
+                  onClick={() => handleProtectedClick('/discover-vcs')}
+                  className="px-6 py-3 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors shadow-md"
+                >
+                  Discover VCs
+                </button>
+                <button
+                  onClick={() => handleProtectedClick('/fundraising')}
+                  className="px-6 py-3 bg-white text-gray-800 border-2 border-gray-800 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Fundraising Tools
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => handleProtectedClick('/discover')}
+                  className="px-6 py-3 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors shadow-md"
+                >
+                  Discover Startups
+                </button>
+                <button
+                  onClick={() => handleProtectedClick('/analysis')}
+                  className="px-6 py-3 bg-white text-gray-800 border-2 border-gray-800 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Analyze Startup
+                </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -60,12 +80,16 @@ function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Discover Startups</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              {user?.user_type === 'entrepreneur' ? 'Discover VCs' : 'Discover Startups'}
+            </h3>
             <p className="text-gray-600">
-              Find promising startups across industries. Search by sector, stage, location, and more.
+              {user?.user_type === 'entrepreneur'
+                ? 'Find the right investors and venture capital firms for your startup. Search by industry, stage, and investment focus.'
+                : 'Find promising startups across industries. Search by sector, stage, location, and more.'}
             </p>
             <button
-              onClick={() => handleProtectedClick('/discover')}
+              onClick={() => handleProtectedClick(user?.user_type === 'entrepreneur' ? '/discover-vcs' : '/discover')}
               className="mt-4 inline-block text-gray-700 font-medium hover:text-gray-900"
             >
               Explore →
@@ -89,15 +113,19 @@ function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Startup Analysis</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              {user?.user_type === 'entrepreneur' ? 'Fundraising Tools' : 'Startup Analysis'}
+            </h3>
             <p className="text-gray-600">
-              Deep dive into IP portfolios, financial metrics, and founding team backgrounds.
+              {user?.user_type === 'entrepreneur'
+                ? 'Get AI-powered insights to improve your pitch deck and fundraising strategy.'
+                : 'Deep dive into IP portfolios, financial metrics, and founding team backgrounds.'}
             </p>
             <button
-              onClick={() => handleProtectedClick('/analysis')}
+              onClick={() => handleProtectedClick(user?.user_type === 'entrepreneur' ? '/fundraising' : '/analysis')}
               className="mt-4 inline-block text-gray-700 font-medium hover:text-gray-900"
             >
-              Analyze →
+              {user?.user_type === 'entrepreneur' ? 'Get Started →' : 'Analyze →'}
             </button>
           </div>
 

@@ -4,8 +4,10 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Navigation from './components/Navigation'
 import Home from './pages/Home'
 import DiscoverStartups from './pages/DiscoverStartups'
+import DiscoverVCs from './pages/DiscoverVCs'
 import Portfolio from './pages/Portfolio'
 import StartupAnalysis from './pages/StartupAnalysis'
+import Fundraising from './pages/Fundraising'
 import Chat from './pages/Chat'
 import Login from './pages/Login'
 
@@ -27,6 +29,14 @@ function App() {
               }
             />
             <Route
+              path="/discover-vcs"
+              element={
+                <ProtectedRoute>
+                  <DiscoverVCs />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/portfolio"
               element={
                 <ProtectedRoute>
@@ -39,6 +49,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <StartupAnalysis />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/fundraising"
+              element={
+                <ProtectedRoute>
+                  <Fundraising />
                 </ProtectedRoute>
               }
             />

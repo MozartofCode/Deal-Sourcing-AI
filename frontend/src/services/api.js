@@ -104,11 +104,12 @@ export const search = async (query, searchType = 'all') => {
 }
 
 // Authentication APIs
-export const register = async (email, password, name) => {
+export const register = async (email, password, name, userType) => {
   const response = await api.post('/api/auth/register', {
     email,
     password,
     name,
+    user_type: userType,
   })
   // Store token and user
   if (response.data.access_token) {

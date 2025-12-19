@@ -31,7 +31,8 @@ async def register(user_data: UserCreate):
     user, error_message = await create_user(
         email=user_data.email,
         password=user_data.password,
-        name=user_data.name
+        name=user_data.name,
+        user_type=user_data.user_type.value if user_data.user_type else None
     )
     
     if user is None:
