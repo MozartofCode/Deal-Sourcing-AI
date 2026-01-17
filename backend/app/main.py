@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
-from app.routes import chat, history, startups, auth, portfolio, tracking, profiles, messaging, ai_matching
+from app.routes import chat, history, startups, auth, portfolio, tracking, profiles, messaging, ai_matching, email, ml, network, signals
 import os
 import logging
 from dotenv import load_dotenv
@@ -86,6 +86,12 @@ app.include_router(tracking.router, prefix="/api/tracking", tags=["tracking"])
 app.include_router(profiles.router, prefix="/api/profiles", tags=["profiles"])
 app.include_router(messaging.router, prefix="/api/messaging", tags=["messaging"])
 app.include_router(ai_matching.router, prefix="/api/ai", tags=["ai-matching"])
+
+# Advanced features routers
+app.include_router(email.router)
+app.include_router(ml.router)
+app.include_router(network.router)
+app.include_router(signals.router)
 
 
 @app.get("/health")
