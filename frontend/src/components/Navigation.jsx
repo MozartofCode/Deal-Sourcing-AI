@@ -109,6 +109,33 @@ function Navigation() {
                   AI Matches
                 </Link>
                 <Link
+                  to="/email-workflow"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/email-workflow')
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                    }`}
+                >
+                  Email Flow
+                </Link>
+                <Link
+                  to="/thesis"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/thesis')
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                    }`}
+                >
+                  Thesis
+                </Link>
+                <Link
+                  to="/network-intros"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/network-intros')
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                    }`}
+                >
+                  Network
+                </Link>
+                <Link
                   to="/messages"
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/messages')
                     ? 'bg-gray-100 text-gray-800'

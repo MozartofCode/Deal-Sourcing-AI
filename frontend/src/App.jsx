@@ -13,6 +13,9 @@ import Login from './pages/Login'
 import AIMatches from './pages/AIMatches'
 import Messages from './pages/Messages'
 import Profile from './pages/Profile'
+import EmailWorkflow from './pages/EmailWorkflow'
+import InvestmentThesis from './pages/InvestmentThesis'
+import NetworkIntros from './pages/NetworkIntros'
 
 function App() {
   return (
@@ -100,6 +103,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/email-workflow"
+              element={
+                <ProtectedRoute>
+                  <EmailWorkflow />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/thesis"
+              element={
+                <ProtectedRoute>
+                  <InvestmentThesis />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/network-intros"
+              element={
+                <ProtectedRoute>
+                  <NetworkIntros />
                 </ProtectedRoute>
               }
             />
