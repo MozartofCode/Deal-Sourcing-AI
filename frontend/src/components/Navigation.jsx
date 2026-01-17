@@ -25,15 +25,15 @@ function Navigation() {
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 flex items-center justify-center">
               <svg width="24" height="28" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Left face - darker grey */}
-                <path d="M12 2L2 12L6 16L12 10L18 16L22 12L12 2Z" fill="#374151"/>
-                {/* Right face - lighter grey */}
-                <path d="M12 2L22 12L18 16L12 10L6 16L2 12L12 2Z" fill="#6b7280"/>
+                {/* Left face - darker slate blue */}
+                <path d="M12 2L2 12L6 16L12 10L18 16L22 12L12 2Z" fill="#4A5F7A" />
+                {/* Right face - medium slate blue */}
+                <path d="M12 2L22 12L18 16L12 10L6 16L2 12L12 2Z" fill="#5B7C99" />
                 {/* Center highlight */}
-                <path d="M12 4L18 10L12 16L6 10L12 4Z" fill="#9ca3af" opacity="0.6"/>
+                <path d="M12 4L18 10L12 16L6 10L12 4Z" fill="#7A92AB" opacity="0.6" />
                 {/* Base */}
-                <rect x="8" y="16" width="8" height="10" fill="#374151"/>
-                <rect x="9" y="16" width="6" height="10" fill="#6b7280"/>
+                <rect x="8" y="16" width="8" height="10" fill="#4A5F7A" />
+                <rect x="9" y="16" width="6" height="10" fill="#5B7C99" />
               </svg>
             </div>
             <span className="text-xl font-bold text-gray-900" style={{ fontFamily: 'serif' }}>Scout</span>
@@ -43,11 +43,10 @@ function Navigation() {
           <div className="hidden md:flex items-center space-x-1">
             <Link
               to="/"
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/')
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/')
                   ? 'bg-gray-100 text-gray-800'
                   : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-              }`}
+                }`}
             >
               Home
             </Link>
@@ -55,21 +54,19 @@ function Navigation() {
               <>
                 <Link
                   to="/discover-vcs"
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive('/discover-vcs')
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/discover-vcs')
                       ? 'bg-gray-100 text-gray-800'
                       : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                  }`}
+                    }`}
                 >
                   Discover VCs
                 </Link>
                 <Link
                   to="/fundraising"
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive('/fundraising')
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/fundraising')
                       ? 'bg-gray-100 text-gray-800'
                       : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                  }`}
+                    }`}
                 >
                   Fundraising
                 </Link>
@@ -78,64 +75,58 @@ function Navigation() {
               <>
                 <Link
                   to="/discover"
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive('/discover')
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/discover')
                       ? 'bg-gray-100 text-gray-800'
                       : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                  }`}
+                    }`}
                 >
                   Discover Startups
                 </Link>
                 <Link
                   to="/portfolio"
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive('/portfolio')
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/portfolio')
                       ? 'bg-gray-100 text-gray-800'
                       : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                  }`}
+                    }`}
                 >
                   My Portfolio
                 </Link>
-            <Link
-              to="/analysis"
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/analysis')
-                  ? 'bg-gray-100 text-gray-800'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-              }`}
-            >
-              Startup Analysis
-            </Link>
-            <Link
-              to="/ai-matches"
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/ai-matches')
-                  ? 'bg-gray-100 text-gray-800'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-              }`}
-            >
-              AI Matches
-            </Link>
-            <Link
-              to="/messages"
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/messages')
-                  ? 'bg-gray-100 text-gray-800'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-              }`}
-            >
-              Messages
-            </Link>
-            <Link
-              to="/profile"
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/profile')
-                  ? 'bg-gray-100 text-gray-800'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-              }`}
-            >
-              Profile
-            </Link>
+                <Link
+                  to="/analysis"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/analysis')
+                      ? 'bg-gray-100 text-gray-800'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                    }`}
+                >
+                  Startup Analysis
+                </Link>
+                <Link
+                  to="/ai-matches"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/ai-matches')
+                      ? 'bg-gray-100 text-gray-800'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                    }`}
+                >
+                  AI Matches
+                </Link>
+                <Link
+                  to="/messages"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/messages')
+                      ? 'bg-gray-100 text-gray-800'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                    }`}
+                >
+                  Messages
+                </Link>
+                <Link
+                  to="/profile"
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive('/profile')
+                      ? 'bg-gray-100 text-gray-800'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                    }`}
+                >
+                  Profile
+                </Link>
               </>
             )}
             {user ? (
@@ -190,11 +181,10 @@ function Navigation() {
         <div className="px-2 pt-2 pb-3 space-y-1">
           <Link
             to="/"
-            className={`block px-3 py-2 rounded-lg text-base font-medium ${
-              isActive('/')
+            className={`block px-3 py-2 rounded-lg text-base font-medium ${isActive('/')
                 ? 'bg-gray-100 text-gray-800'
                 : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-            }`}
+              }`}
           >
             Home
           </Link>
@@ -202,21 +192,19 @@ function Navigation() {
             <>
               <Link
                 to="/discover-vcs"
-                className={`block px-3 py-2 rounded-lg text-base font-medium ${
-                  isActive('/discover-vcs')
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${isActive('/discover-vcs')
                     ? 'bg-gray-100 text-gray-800'
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                }`}
+                  }`}
               >
                 Discover VCs
               </Link>
               <Link
                 to="/fundraising"
-                className={`block px-3 py-2 rounded-lg text-base font-medium ${
-                  isActive('/fundraising')
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${isActive('/fundraising')
                     ? 'bg-gray-100 text-gray-800'
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                }`}
+                  }`}
               >
                 Fundraising
               </Link>
@@ -225,91 +213,85 @@ function Navigation() {
             <>
               <Link
                 to="/discover"
-                className={`block px-3 py-2 rounded-lg text-base font-medium ${
-                  isActive('/discover')
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${isActive('/discover')
                     ? 'bg-gray-100 text-gray-800'
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                }`}
+                  }`}
               >
                 Discover Startups
               </Link>
               <Link
                 to="/portfolio"
-                className={`block px-3 py-2 rounded-lg text-base font-medium ${
-                  isActive('/portfolio')
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${isActive('/portfolio')
                     ? 'bg-gray-100 text-gray-800'
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                }`}
+                  }`}
               >
                 My Portfolio
               </Link>
               <Link
                 to="/analysis"
-                className={`block px-3 py-2 rounded-lg text-base font-medium ${
-                  isActive('/analysis')
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${isActive('/analysis')
                     ? 'bg-gray-100 text-gray-800'
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                }`}
+                  }`}
               >
                 Startup Analysis
               </Link>
               <Link
                 to="/ai-matches"
-                className={`block px-3 py-2 rounded-lg text-base font-medium ${
-                  isActive('/ai-matches')
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${isActive('/ai-matches')
                     ? 'bg-gray-100 text-gray-800'
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                }`}
+                  }`}
               >
                 AI Matches
               </Link>
               <Link
                 to="/messages"
-                className={`block px-3 py-2 rounded-lg text-base font-medium ${
-                  isActive('/messages')
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${isActive('/messages')
                     ? 'bg-gray-100 text-gray-800'
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                }`}
+                  }`}
               >
                 Messages
               </Link>
               <Link
                 to="/profile"
-                className={`block px-3 py-2 rounded-lg text-base font-medium ${
-                  isActive('/profile')
+                className={`block px-3 py-2 rounded-lg text-base font-medium ${isActive('/profile')
                     ? 'bg-gray-100 text-gray-800'
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
-                }`}
+                  }`}
               >
                 Profile
               </Link>
             </>
           )}
-            {user ? (
-              <>
-                <div className="px-3 py-2 text-sm text-gray-700 border-t border-gray-200 mt-2 pt-2">
-                  {user.name || user.email}
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="block w-full text-left px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-800"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <Link
-                to="/login"
-                className="block px-3 py-2 bg-gray-800 text-white rounded-lg text-base font-medium hover:bg-gray-900 text-center mt-2"
+          {user ? (
+            <>
+              <div className="px-3 py-2 text-sm text-gray-700 border-t border-gray-200 mt-2 pt-2">
+                {user.name || user.email}
+              </div>
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-800"
               >
-                Login
-              </Link>
-            )}
-          </div>
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="block px-3 py-2 bg-gray-800 text-white rounded-lg text-base font-medium hover:bg-gray-900 text-center mt-2"
+            >
+              Login
+            </Link>
+          )}
         </div>
-      </nav>
-    )
-  }
-  
-  export default Navigation
+      </div>
+    </nav>
+  )
+}
+
+export default Navigation
 
