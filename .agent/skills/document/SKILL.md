@@ -17,9 +17,10 @@ For each changed file:
 
 ## 3. Update Relevant Documentation
 
-- **CHANGELOG.md**: Add entry under "Unreleased" section
-  - Use categories: Added, Changed, Fixed, Security, Removed
-  - Be concise, user-facing language
+- **README.md**: Add all of the new changes.
+- Get rid of any old documentation that is no longer relevant.
+- Update any other documentation that is relevant to the changes.
+- Add the new documentation to the relevant sections.
 
 ## 4. Documentation Style Rules
 
