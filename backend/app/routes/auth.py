@@ -31,12 +31,10 @@ async def register(user_data: UserCreate):
     user, error_message = await create_user(
         email=user_data.email,
         password=user_data.password,
-        name=user_data.name,
-        user_type=user_data.user_type.value if user_data.user_type else None
+        name=user_data.name
     )
     
     if user is None:
-        # Ensure we always have an error message
         final_error = error_message if error_message else "Email already registered or invalid data"
         logger.warning(f"Registration failed for {user_data.email}: {final_error}")
         raise HTTPException(
@@ -69,7 +67,6 @@ async def login(user_data: UserLogin):
     user, error_message = await authenticate_user(user_data.email, user_data.password)
     
     if user is None:
-        # Use the specific error message from auth service, or default message
         final_error = error_message if error_message else "Incorrect email or password"
         logger.warning(f"Login failed for {user_data.email}: {final_error}")
         raise HTTPException(
@@ -122,4 +119,3 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
         )
     
     return UserResponse(**user)
-

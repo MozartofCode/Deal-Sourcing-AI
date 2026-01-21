@@ -1,141 +1,51 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { AuthProvider } from './components/AuthContext'
-import ProtectedRoute from './components/ProtectedRoute'
-import Navigation from './components/Navigation'
-import Home from './pages/Home'
-import DiscoverStartups from './pages/DiscoverStartups'
-import DiscoverVCs from './pages/DiscoverVCs'
-import Portfolio from './pages/Portfolio'
-import StartupAnalysis from './pages/StartupAnalysis'
-import Fundraising from './pages/Fundraising'
-import Chat from './pages/Chat'
-import Login from './pages/Login'
-import AIMatches from './pages/AIMatches'
-import Messages from './pages/Messages'
-import Profile from './pages/Profile'
-import EmailWorkflow from './pages/EmailWorkflow'
-import InvestmentThesis from './pages/InvestmentThesis'
-import NetworkIntros from './pages/NetworkIntros'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Landing from './pages/Landing';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ProfileSetup from './pages/ProfileSetup';
+import Dashboard from './pages/Dashboard';
+
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-background text-white">Loading...</div>;
+
+  if (!user) return <Navigate to="/login" />;
+
+  return children;
+};
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-          <Navigation />
+    <div className="min-h-screen bg-background text-foreground font-sans antialiased selection:bg-cyan-500/30">
+      <AuthProvider>
+        <Router>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
-            <Route
-              path="/discover"
-              element={
-                <ProtectedRoute>
-                  <DiscoverStartups />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/discover-vcs"
-              element={
-                <ProtectedRoute>
-                  <DiscoverVCs />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/portfolio"
-              element={
-                <ProtectedRoute>
-                  <Portfolio />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/analysis"
-              element={
-                <ProtectedRoute>
-                  <StartupAnalysis />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/fundraising"
-              element={
-                <ProtectedRoute>
-                  <Fundraising />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/chat"
-              element={
-                <ProtectedRoute>
-                  <Chat />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/ai-matches"
-              element={
-                <ProtectedRoute>
-                  <AIMatches />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/messages"
-              element={
-                <ProtectedRoute>
-                  <Messages />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile/:userId"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/email-workflow"
-              element={
-                <ProtectedRoute>
-                  <EmailWorkflow />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/thesis"
-              element={
-                <ProtectedRoute>
-                  <InvestmentThesis />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/network-intros"
-              element={
-                <ProtectedRoute>
-                  <NetworkIntros />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/register" element={<Register />} />
+
+            <Route path="/setup" element={
+              <ProtectedRoute>
+                <ProfileSetup />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
-        </div>
-      </Router>
-    </AuthProvider>
-  )
+        </Router>
+      </AuthProvider>
+    </div>
+  );
 }
 
-export default App
-
+export default App;

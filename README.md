@@ -1,126 +1,61 @@
-# Deal-Sourcing-AI
+# Deal Sourcing AI
 
-A ChatGPT-like interface for deal sourcing with React frontend and Python FastAPI backend.
+**Your AI-Powered Investment Committee.**
 
-## Project Structure
-
-```
-Deal-Sourcing-AI/
-├── frontend/          # React + Vite frontend
-├── backend/           # FastAPI backend
-└── README.md
-```
-
-## Quick Start
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-```bash
-cd frontend
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
-npm run dev
-```
-
-The frontend will be available at `http://localhost:3000`
-
-### Backend Setup
-
-1. Navigate to the backend directory:
-```bash
-cd backend
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. **Get a Groq API key:**
-   - Sign up at: https://console.groq.com/
-   - Get your API key from: https://console.groq.com/keys
-   - Create `.env` file in `backend` folder:
-     ```env
-     GROQ_API_KEY=your-groq-api-key-here
-     ```
-
-5. Start the server:
-```bash
-uvicorn app.main:app --reload --port 8000
-```
-
-The backend API will be available at `http://localhost:8000`
+Deal Sourcing AI streamlines early-stage diligence by automating the "Pass/Proceed" decision. Investors define their thesis, upload a pitch deck, and receive an instant, ruthless analysis of the opportunity.
 
 ## Features
 
-- ChatGPT-like chat interface with message bubbles
-- Left sidebar with conversation history
-- Responsive design (mobile-friendly)
-- FastAPI backend with Groq API integration
-- Rate limiting (5 requests per user per hour)
-- CORS configured for frontend-backend communication
+- **Thesis Alignment**: Define your investment DNA (Market size, Deal size, Stage, Geography).
+- **Instant Analysis**: Upload PDF pitch decks or paste text.
+- **AI Diligence**: Uses Groq (Llama 3 70B) to score deals and highlight strengths/weaknesses.
+- **Premium UI**: Dark mode, glassmorphism, and seamless interactions.
 
-## API Endpoints
+## Tech Stack
 
-- `GET /health` - Health check
-- `POST /api/chat` - Send chat message (Groq-powered, rate limited)
-- `GET /api/history` - Get conversation history (mock data)
-- `POST /api/history` - Create new conversation (placeholder)
+- **Frontend**: React, Tailwind CSS, Framer Motion, Lucide React.
+- **Backend**: FastAPI, Pydantic, PyPDF.
+- **Database**: Supabase (PostgreSQL).
+- **AI**: Groq API.
 
-## Rate Limiting
+## Setup Instructions
 
-- Each user can make **5 requests per hour** (based on IP address)
-- Rate limit resets after 1 hour
-- Response includes `remaining_requests` field
+### 1. Database Setup
+1. Create a Supabase project.
+2. Go to the SQL Editor in Supabase.
+3. Open `backend/database_schema_pivot.sql` and copy its content.
+4. Run the SQL to create the `investor_profiles` and `diligence_reports` tables.
 
-## API Documentation
+### 2. Backend Setup
+```bash
+cd backend
+python -m venv venv
+# Activate venv (Windows: venv\Scripts\activate, Mac: source venv/bin/activate)
+pip install -r requirements.txt
+```
 
-Once the backend is running:
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
+Create a `.env` file in `backend/`:
+```env
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_anon_key
+GROQ_API_KEY=your_groq_api_key
+JWT_SECRET_KEY=your_secret_key
+```
 
-## 🚀 Deployment (FREE with Auto-Deploy!)
+Run the server:
+```bash
+uvicorn app.main:app --reload
+```
 
-**Want to deploy for FREE with automatic updates?** Check out the comprehensive guide:
+### 3. Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-👉 **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Step-by-step instructions for free deployment
-
-### Quick Summary:
-- **Frontend**: Deploy to [Vercel](https://vercel.com) (free, auto-deploys on push)
-- **Backend**: Deploy to [Render.com](https://render.com) (free tier, auto-deploys on push)
-- **AI**: Uses Groq API - fast inference with high-quality models!
-- **Auto-Deploy**: Every `git push` automatically deploys your changes
-
-### Why This Setup?
-- ✅ **100% Free** (within generous limits)
-- ✅ **Automatic deployments** on every push to GitHub
-- ✅ **Secure** - API keys stored in platform secrets, never in code
-- ✅ **Easy** - No credit card required, simple setup
-
-See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions!
-
-## Environment Variables
-
-### Backend (.env)
-- `GROQ_API_KEY` (required) - Your Groq API key from https://console.groq.com/keys
-- `GROQ_MODEL` (optional, default: `llama-3.3-70b-versatile`) - Groq model to use
-- `ALLOWED_ORIGINS` (optional) - Comma-separated CORS origins
-
-### Frontend (.env)
-- `VITE_API_URL` (optional) - Backend API URL (defaults to http://localhost:8000)
-
-## Important Notes
-
-- **Groq API**: Fast inference with high-quality models - get your API key at https://console.groq.com/keys
-- **API Key**: Required - sign up at https://console.groq.com/ to get your free API key
-- **Rate Limiting**: Users are limited to 5 requests per hour (per IP address)
-- **CORS**: Update `ALLOWED_ORIGINS` in production to include your frontend URL
-- **System Prompt**: The AI is configured as a professional VC analyst focused on innovative and profitable products
+## Workflow
+1. **Sign Up**: Create an investor account.
+2. **Setup Profile**: Input your investment thesis.
+3. **Analyze**: Upload a deck.
+4. **Decide**: View the "Proceed" or "Pass" recommendation.

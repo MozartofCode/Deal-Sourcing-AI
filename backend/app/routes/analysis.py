@@ -1,0 +1,112 @@
+"""
+Analysis Routes
+"""
+import logging
+import io
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from app.models import DiligenceReportResponse
+from app.database import get_supabase_client
+from app.services.auth_service import decode_access_token
+from app.services.analysis_service import analyze_deck
+from pypdf import PdfReader
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter()
+security = HTTPBearer()
+
+async def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+    token = credentials.credentials
+    payload = decode_access_token(token)
+    if not payload or not payload.get("sub"):
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return payload.get("sub")
+
+@router.post("/", response_model=DiligenceReportResponse)
+async def analyze_pitch_deck(
+    file: UploadFile = File(None),
+    text_content: str = Form(None),
+    user_id: str = Depends(get_current_user_id)
+):
+    """
+    Analyze a pitch deck (PDF upload or raw text) against the user's thesis.
+    """
+    supabase = get_supabase_client()
+    
+    # 1. Fetch User Thesis
+    profile_response = supabase.table("investor_profiles").select("*").eq("user_id", user_id).maybe_single().execute()
+    if not profile_response.data:
+        raise HTTPException(status_code=400, detail="Please complete your Investor Profile (Thesis) before analyzing deals.")
+    
+    thesis_data = profile_response.data
+    
+    # 2. Extract Content
+    deck_text = ""
+    filename = "Manual Text"
+    
+    if file:
+        filename = file.filename
+        content_type = file.content_type
+        
+        if content_type == "application/pdf":
+            try:
+                contents = await file.read()
+                pdf_file = io.BytesIO(contents)
+                reader = PdfReader(pdf_file)
+                for page in reader.pages:
+                    deck_text += page.extract_text() + "\n"
+            except Exception as e:
+                logger.error(f"PDF extraction failed: {e}")
+                raise HTTPException(status_code=400, detail="Failed to read PDF file")
+        elif content_type.startswith("text/"):
+            contents = await file.read()
+            deck_text = contents.decode("utf-8")
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported file format. Please upload PDF or Text.")
+            
+    elif text_content:
+        deck_text = text_content
+    else:
+        raise HTTPException(status_code=400, detail="No deck content provided (file or text)")
+        
+    if len(deck_text.strip()) < 50:
+        raise HTTPException(status_code=400, detail="Deck content too short for analysis.")
+        
+    # 3. Analyze
+    try:
+        analysis_result = await analyze_deck(deck_text, thesis_data)
+        
+        # 4. Save Record
+        record = {
+            "user_id": user_id,
+            "deck_filename": filename,
+            "decision": analysis_result.get("decision", "CAUTION"),
+            "score": analysis_result.get("score", 0),
+            "summary": analysis_result.get("summary", ""),
+            "strengths": analysis_result.get("strengths", []),
+            "weaknesses": analysis_result.get("weaknesses", []),
+            "analysis_json": analysis_result
+        }
+        
+        # Store full raw text only if needed? Nah, privacy/storage. Just metadata + analysis.
+        # But we might want to store 'deck_content' link if we uploaded to storage types, 
+        # but here we just processed in-memory.
+        
+        response = supabase.table("diligence_reports").insert(record).execute()
+        
+        if not response.data:
+             raise HTTPException(status_code=500, detail="Failed to save analysis record")
+             
+        return response.data[0]
+        
+    except Exception as e:
+        logger.error(f"Analysis process failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    
+@router.get("/", response_model=list[DiligenceReportResponse])
+async def get_my_reports(user_id: str = Depends(get_current_user_id)):
+    supabase = get_supabase_client()
+    response = supabase.table("diligence_reports").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
+    return response.data

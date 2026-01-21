@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
-from app.routes import chat, history, startups, auth, portfolio, tracking, profiles, messaging, ai_matching, email, ml, network, signals
+from app.routes import auth, profiles, analysis
 import os
 import logging
 from dotenv import load_dotenv
@@ -13,7 +13,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Scout API", version="1.0.0")
+app = FastAPI(title="Deal Sourcing AI", version="2.0.0")
 
 # Define allowed origins - always include production frontend
 allowed_origins = [
@@ -26,7 +26,6 @@ allowed_origins = [
 env_origins = os.getenv("ALLOWED_ORIGINS", "")
 if env_origins:
     env_origin_list = [origin.strip() for origin in env_origins.split(",") if origin.strip()]
-    # Add any additional origins from env, but always keep production frontend
     for origin in env_origin_list:
         if origin not in allowed_origins:
             allowed_origins.append(origin)
@@ -37,16 +36,16 @@ if "https://deal-sourcing-ai.vercel.app" not in allowed_origins:
 
 logger.info(f"CORS configured with origins: {allowed_origins}")
 
-# Configure CORS middleware - MUST be added before routes
+# Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
 )
 
-# Add explicit CORS header middleware as backup to ensure headers are always set
+# Add explicit CORS header middleware as backup
 @app.middleware("http")
 async def add_cors_headers(request: Request, call_next):
     origin = request.headers.get("origin")
@@ -66,7 +65,6 @@ async def add_cors_headers(request: Request, call_next):
         else:
             return Response(status_code=403)
     
-    # For other requests, process normally and add CORS headers
     response = await call_next(request)
     
     if origin in allowed_origins:
@@ -78,33 +76,20 @@ async def add_cors_headers(request: Request, call_next):
 
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
-app.include_router(portfolio.router, prefix="/api/portfolio", tags=["portfolio"])
-app.include_router(chat.router, prefix="/api", tags=["chat"])
-app.include_router(history.router, prefix="/api", tags=["history"])
-app.include_router(startups.router, prefix="/api", tags=["startups"])
-app.include_router(tracking.router, prefix="/api/tracking", tags=["tracking"])
 app.include_router(profiles.router, prefix="/api/profiles", tags=["profiles"])
-app.include_router(messaging.router, prefix="/api/messaging", tags=["messaging"])
-app.include_router(ai_matching.router, prefix="/api/ai", tags=["ai-matching"])
+app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
 
-# Advanced features routers
-app.include_router(email.router)
-app.include_router(ml.router)
-app.include_router(network.router)
-app.include_router(signals.router)
-
-
+# Health Check
 @app.get("/health")
 async def health_check():
     """Health check endpoint with database connection test"""
     try:
         from app.database import get_supabase_client
         supabase = get_supabase_client()
-        # Test database connection
         supabase.table("users").select("id").limit(1).execute()
         return {
             "status": "healthy",
-            "message": "API is running",
+            "message": "API is running (Investor Pivot)",
             "database": "connected"
         }
     except Exception as e:
@@ -115,4 +100,3 @@ async def health_check():
             "database": "disconnected",
             "error": str(e)
         }
-
