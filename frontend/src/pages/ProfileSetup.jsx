@@ -8,6 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 const ProfileSetup = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [profileExists, setProfileExists] = useState(false);
     const [formData, setFormData] = useState({
         thesis: '',
         min_ticket_size: '',
@@ -24,6 +25,7 @@ const ProfileSetup = () => {
             try {
                 const res = await axios.get(`${API_URL}/profiles/`);
                 if (res.data) {
+                    setProfileExists(true);
                     const p = res.data;
                     setFormData({
                         thesis: p.thesis || '',
@@ -36,7 +38,8 @@ const ProfileSetup = () => {
                     });
                 }
             } catch (e) {
-                // Ignore 404
+                // Ignore 404 - profile doesn't exist yet
+                setProfileExists(false);
             }
         };
         fetchProfile();
@@ -75,6 +78,10 @@ const ProfileSetup = () => {
                 className="max-w-2xl mx-auto glass-card p-8 rounded-2xl"
             >
                 <div className="mb-8">
+                    <div className="flex items-center gap-2 mb-6">
+                        <img src="/logo.png" alt="Scout Logo" className="w-8 h-8 object-contain" />
+                        <span className="text-xl font-bold tracking-tighter text-white">Scout</span>
+                    </div>
                     <h1 className="text-3xl font-bold mb-2">Define Your Thesis</h1>
                     <p className="text-gray-400">The AI will use this criteria to evaluate every deal.</p>
                 </div>
@@ -155,14 +162,23 @@ const ProfileSetup = () => {
                         </div>
                     </div>
 
-                    <div className="pt-4">
+                    <div className="pt-4 space-y-3">
                         <button
                             type="submit"
                             disabled={loading}
                             className="w-full py-3 px-4 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-xl transition-colors disabled:opacity-50"
                         >
-                            {loading ? 'Saving Profile...' : 'Save & Continue'}
+                            {loading ? 'Saving Profile...' : (profileExists ? 'Update Profile' : 'Save & Continue')}
                         </button>
+                        {profileExists && (
+                            <button
+                                type="button"
+                                onClick={() => navigate('/dashboard')}
+                                className="w-full py-3 px-4 bg-white/5 hover:bg-white/10 text-gray-300 font-medium rounded-xl transition-colors border border-white/10"
+                            >
+                                Back to Dashboard
+                            </button>
+                        )}
                     </div>
                 </form>
             </motion.div>

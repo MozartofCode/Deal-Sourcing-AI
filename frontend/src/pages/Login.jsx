@@ -17,7 +17,22 @@ const Login = () => {
         setLoading(true);
         try {
             await login(email, password);
-            navigate('/dashboard');
+
+            // Check if user has a profile
+            try {
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+                await axios.get(`${API_URL}/profiles/`);
+                // Profile exists, go to dashboard
+                navigate('/dashboard');
+            } catch (profileErr) {
+                // No profile (404), redirect to setup
+                if (profileErr.response?.status === 404) {
+                    navigate('/setup');
+                } else {
+                    // Other error, still go to dashboard (it will handle the redirect)
+                    navigate('/dashboard');
+                }
+            }
         } catch (err) {
             setError(err.response?.data?.detail || 'Failed to login');
         } finally {
@@ -35,6 +50,10 @@ const Login = () => {
                 className="w-full max-w-md p-8 rounded-2xl glass-card"
             >
                 <div className="text-center mb-8">
+                    <div className="flex justify-center items-center gap-2 mb-6">
+                        <img src="/logo.png" alt="Scout Logo" className="w-10 h-10 object-contain" />
+                        <span className="text-2xl font-bold tracking-tighter text-white">Scout</span>
+                    </div>
                     <h2 className="text-3xl font-bold mb-2">Welcome Back</h2>
                     <p className="text-gray-400">Sign in to access your deal flow</p>
                 </div>

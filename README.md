@@ -1,8 +1,8 @@
-# Deal Sourcing AI 🚀
+# Scout 🚀
 
 **Your AI-Powered Investment Committee with Real-Time Market Intelligence**
 
-Deal Sourcing AI streamlines early-stage diligence by automating investment decisions. Investors define their thesis, upload a pitch deck, and receive an instant, data-driven analysis enhanced with real-time market intelligence from external APIs.
+Scout streamlines early-stage diligence by automating investment decisions. Investors define their thesis, upload a pitch deck, and receive an instant, data-driven analysis enhanced with real-time market intelligence from external APIs.
 
 ---
 
