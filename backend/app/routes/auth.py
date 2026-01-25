@@ -95,6 +95,8 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
     """
     Get current authenticated user information
     """
+    from app.database import get_supabase_client
+    
     token = credentials.credentials
     payload = decode_access_token(token)
     
@@ -111,11 +113,45 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
             detail="Invalid authentication credentials"
         )
     
-    user = await get_user_by_id(user_id)
-    if user is None:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
+    # Use the JWT token to get user info directly from Supabase
+    try:
+        supabase = get_supabase_client()
+        # Set the JWT token for this request
+        supabase.auth.set_session(token, token)
+        user_response = supabase.auth.get_user(token)
+        
+        if user_response.user is None:
+            raise HTTPException(
+                status_code=404,
+                detail="User not found"
+            )
+        
+        user = user_response.user
+        user_metadata = user.user_metadata or {}
+        name = user_metadata.get("name") or user_metadata.get("full_name")
+        
+        created_at_str = user.created_at
+        if created_at_str:
+            try:
+                from datetime import datetime
+                created_at = datetime.fromisoformat(created_at_str.replace('Z', '+00:00'))
+            except:
+                from datetime import datetime
+                created_at = datetime.utcnow()
+        else:
+            from datetime import datetime
+            created_at = datetime.utcnow()
+        
+        return UserResponse(
+            id=user.id,
+            email=user.email,
+            name=name,
+            created_at=created_at
         )
-    
-    return UserResponse(**user)
+    except Exception as e:
+        logger.error(f"Error fetching user info: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to fetch user information"
+        )
+

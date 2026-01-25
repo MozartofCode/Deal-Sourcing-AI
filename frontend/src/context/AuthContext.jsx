@@ -28,7 +28,11 @@ export const AuthProvider = ({ children }) => {
             setUser(res.data);
         } catch (error) {
             console.error("Error fetching user", error);
-            logout();
+            // Only logout if it's an authentication error (401)
+            // Other errors might be temporary (500, network issues, etc.)
+            if (error.response?.status === 401) {
+                logout();
+            }
         } finally {
             setLoading(false);
         }
