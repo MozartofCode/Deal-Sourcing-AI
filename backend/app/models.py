@@ -22,6 +22,7 @@ class UserResponse(BaseModel):
     id: str
     email: str
     name: Optional[str] = None
+    has_profile: bool = False
     created_at: datetime
 
     class Config:

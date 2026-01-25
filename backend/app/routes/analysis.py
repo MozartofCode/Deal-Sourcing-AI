@@ -53,6 +53,11 @@ async def analyze_pitch_deck(
     except HTTPException:
         raise
     except Exception as e:
+        # Check for Postgrest 204 (No Content) error
+        error_str = str(e)
+        if "204" in error_str and "Missing response" in error_str:
+             raise HTTPException(status_code=400, detail="Please complete your Investor Profile (Thesis) before analyzing deals.")
+
         logger.error(f"Error fetching investor profile: {e}")
         raise HTTPException(status_code=400, detail="Please complete your Investor Profile (Thesis) before analyzing deals.")
     

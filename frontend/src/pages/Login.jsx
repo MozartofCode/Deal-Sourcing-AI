@@ -16,22 +16,13 @@ const Login = () => {
         setError('');
         setLoading(true);
         try {
-            await login(email, password);
+            const data = await login(email, password);
 
             // Check if user has a profile
-            try {
-                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-                await axios.get(`${API_URL}/profiles/`);
-                // Profile exists, go to dashboard
+            if (data.user && data.user.has_profile) {
                 navigate('/dashboard');
-            } catch (profileErr) {
-                // No profile (404), redirect to setup
-                if (profileErr.response?.status === 404) {
-                    navigate('/setup');
-                } else {
-                    // Other error, still go to dashboard (it will handle the redirect)
-                    navigate('/dashboard');
-                }
+            } else {
+                navigate('/setup');
             }
         } catch (err) {
             setError(err.response?.data?.detail || 'Failed to login');

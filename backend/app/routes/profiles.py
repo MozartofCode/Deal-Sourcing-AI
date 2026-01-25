@@ -29,6 +29,11 @@ async def get_my_profile(user_id: str = Depends(get_current_user_id)):
             raise HTTPException(status_code=404, detail="Profile not found")
         return response.data
     except Exception as e:
+        # Check for Postgrest 204 (No Content) error which happens on maybe_single empty result
+        error_str = str(e)
+        if "204" in error_str and "Missing response" in error_str:
+             raise HTTPException(status_code=404, detail="Profile not found")
+             
         logger.error(f"Error fetching profile: {e}")
         # If specific 404 was raised, re-raise it
         if isinstance(e, HTTPException):
@@ -40,12 +45,21 @@ async def create_or_update_profile(profile: InvestorProfileCreate, user_id: str 
     supabase = get_supabase_client()
     try:
         # Check if exists
-        idx = supabase.table("investor_profiles").select("id").eq("user_id", user_id).maybe_single().execute()
+        idx_data = None
+        try:
+            idx = supabase.table("investor_profiles").select("id").eq("user_id", user_id).maybe_single().execute()
+            idx_data = idx.data
+        except Exception as check_e:
+            # Handle 204 Missing response (means no profile found)
+            if "204" in str(check_e) and "Missing response" in str(check_e):
+                idx_data = None
+            else:
+                raise check_e
         
         data = profile.model_dump()
         data["user_id"] = user_id
         
-        if idx.data:
+        if idx_data:
             # Update
             response = supabase.table("investor_profiles").update(data).eq("user_id", user_id).execute()
         else:

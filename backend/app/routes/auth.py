@@ -49,6 +49,9 @@ async def register(user_data: UserCreate):
         expires_delta=access_token_expires
     )
     
+    # New users don't have a profile yet
+    user["has_profile"] = False
+    
     logger.info(f"Successful registration for user: {user_data.email}")
     return {
         "access_token": access_token,
@@ -75,6 +78,18 @@ async def login(user_data: UserLogin):
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    # Check if user has a profile
+    # We use the service role client here to reliably check existence without RLS issues
+    from app.database import get_supabase_client
+    supabase = get_supabase_client()
+    try:
+        # Check if profile exists
+        profile_response = supabase.table("investor_profiles").select("id").eq("user_id", user["id"]).maybe_single().execute()
+        user["has_profile"] = bool(profile_response.data)
+    except Exception as e:
+        logger.error(f"Error checking profile existence: {e}")
+        user["has_profile"] = False
+    
     # Create access token
     access_token_expires = timedelta(minutes=60 * 24 * 7)  # 7 days
     access_token = create_access_token(
@@ -96,6 +111,7 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
     Get current authenticated user information
     """
     from app.database import get_supabase_client
+    from datetime import datetime
     
     token = credentials.credentials
     payload = decode_access_token(token)
@@ -113,11 +129,9 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
             detail="Invalid authentication credentials"
         )
     
-    # Use the JWT token to get user info directly from Supabase
+    # Use the JWT token to get user info directly from Supabase (no admin API needed)
     try:
         supabase = get_supabase_client()
-        # Set the JWT token for this request
-        supabase.auth.set_session(token, token)
         user_response = supabase.auth.get_user(token)
         
         if user_response.user is None:
@@ -133,25 +147,34 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
         created_at_str = user.created_at
         if created_at_str:
             try:
-                from datetime import datetime
                 created_at = datetime.fromisoformat(created_at_str.replace('Z', '+00:00'))
             except:
-                from datetime import datetime
                 created_at = datetime.utcnow()
         else:
-            from datetime import datetime
             created_at = datetime.utcnow()
+            
+        # Check if profile exists using service role client (supabase var is already that)
+        has_profile = False
+        try:
+            profile_response = supabase.table("investor_profiles").select("id").eq("user_id", user.id).maybe_single().execute()
+            has_profile = bool(profile_response.data)
+        except Exception as e:
+            logger.error(f"Error checking profile existence: {e}")
+            
         
         return UserResponse(
             id=user.id,
             email=user.email,
             name=name,
+            has_profile=has_profile,
             created_at=created_at
         )
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error fetching user info: {e}", exc_info=True)
         raise HTTPException(
-            status_code=500,
-            detail="Failed to fetch user information"
+            status_code=404,
+            detail="User not found"
         )
 
