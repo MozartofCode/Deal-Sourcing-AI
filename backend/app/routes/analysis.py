@@ -27,10 +27,20 @@ async def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depend
 async def analyze_pitch_deck(
     file: UploadFile = File(None),
     text_content: str = Form(None),
+    company_name: str = Form(None),
+    company_domain: str = Form(None),
+    stock_ticker: str = Form(None),
+    industry: str = Form(None),
     user_id: str = Depends(get_current_user_id)
 ):
     """
     Analyze a pitch deck (PDF upload or raw text) against the user's thesis.
+    
+    Optional company metadata can be provided to enrich analysis with external data:
+    - company_name: Name of the company (e.g., "Apple Inc.")
+    - company_domain: Company website domain (e.g., "apple.com")
+    - stock_ticker: Stock symbol if public (e.g., "AAPL")
+    - industry: Industry/sector (e.g., "Technology", "Healthcare")
     """
     supabase = get_supabase_client()
     
@@ -72,10 +82,21 @@ async def analyze_pitch_deck(
         
     if len(deck_text.strip()) < 50:
         raise HTTPException(status_code=400, detail="Deck content too short for analysis.")
+    
+    # 3. Prepare company metadata for external API enrichment
+    company_metadata = None
+    if company_name or company_domain or stock_ticker or industry:
+        company_metadata = {
+            "name": company_name,
+            "domain": company_domain,
+            "ticker": stock_ticker,
+            "industry": industry
+        }
+        logger.info(f"Company metadata provided: {company_metadata}")
         
-    # 3. Analyze
+    # 4. Analyze with external intelligence
     try:
-        analysis_result = await analyze_deck(deck_text, thesis_data)
+        analysis_result = await analyze_deck(deck_text, thesis_data, company_metadata)
         
         # 4. Save Record
         record = {

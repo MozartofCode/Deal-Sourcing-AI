@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { UploadCloud, FileText, CheckCircle, AlertTriangle, XCircle, Plus, ChevronRight, LogOut, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
+import CompanyMetadataForm from '../components/CompanyMetadataForm';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -14,7 +15,16 @@ const Dashboard = () => {
     const [reports, setReports] = useState([]);
     const [selectedReport, setSelectedReport] = useState(null);
     const [analyzing, setAnalyzing] = useState(false);
+    const [showMetadataForm, setShowMetadataForm] = useState(false);
     const fileInputRef = useRef(null);
+
+    // Company metadata state for enhanced analysis
+    const [companyMetadata, setCompanyMetadata] = useState({
+        company_name: '',
+        company_domain: '',
+        stock_ticker: '',
+        industry: ''
+    });
 
     useEffect(() => {
         fetchProfileAndReports();
@@ -42,6 +52,12 @@ const Dashboard = () => {
         const formData = new FormData();
         formData.append('file', file);
 
+        // Add company metadata if provided (enables external API enrichment)
+        if (companyMetadata.company_name) formData.append('company_name', companyMetadata.company_name);
+        if (companyMetadata.company_domain) formData.append('company_domain', companyMetadata.company_domain);
+        if (companyMetadata.stock_ticker) formData.append('stock_ticker', companyMetadata.stock_ticker);
+        if (companyMetadata.industry) formData.append('industry', companyMetadata.industry);
+
         setAnalyzing(true);
         try {
             const res = await axios.post(`${API_URL}/analysis/`, formData, {
@@ -49,6 +65,15 @@ const Dashboard = () => {
             });
             setReports([res.data, ...reports]);
             setSelectedReport(res.data);
+
+            // Reset metadata form
+            setCompanyMetadata({
+                company_name: '',
+                company_domain: '',
+                stock_ticker: '',
+                industry: ''
+            });
+            setShowMetadataForm(false);
         } catch (error) {
             console.error(error);
             alert('Analysis failed: ' + (error.response?.data?.detail || error.message));
@@ -173,6 +198,14 @@ const Dashboard = () => {
                                     </>
                                 )}
                             </div>
+
+                            {/* Company Metadata Form */}
+                            <CompanyMetadataForm
+                                showForm={showMetadataForm}
+                                setShowForm={setShowMetadataForm}
+                                metadata={companyMetadata}
+                                setMetadata={setCompanyMetadata}
+                            />
                         </motion.div>
                     ) : (
                         <motion.div
@@ -230,6 +263,48 @@ const Dashboard = () => {
                                     </ul>
                                 </div>
                             </div>
+
+                            {/* Enhanced Analysis Sections (if available) */}
+                            {(selectedReport.analysis_json?.market_insights ||
+                                selectedReport.analysis_json?.competitive_analysis ||
+                                selectedReport.analysis_json?.financial_health) && (
+                                    <div className="space-y-6">
+                                        <div className="flex items-center gap-2 text-sm text-cyan-400">
+                                            <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                                            <span>Enhanced with real-time market intelligence</span>
+                                        </div>
+
+                                        {selectedReport.analysis_json?.market_insights &&
+                                            selectedReport.analysis_json.market_insights !== 'N/A' && (
+                                                <div className="glass-card p-6 rounded-2xl border-l-4 border-l-blue-500/50">
+                                                    <h3 className="text-lg font-semibold mb-3 text-blue-400">Market Insights</h3>
+                                                    <p className="text-gray-300 text-sm leading-relaxed">
+                                                        {selectedReport.analysis_json.market_insights}
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                        {selectedReport.analysis_json?.competitive_analysis &&
+                                            selectedReport.analysis_json.competitive_analysis !== 'N/A' && (
+                                                <div className="glass-card p-6 rounded-2xl border-l-4 border-l-purple-500/50">
+                                                    <h3 className="text-lg font-semibold mb-3 text-purple-400">Competitive Analysis</h3>
+                                                    <p className="text-gray-300 text-sm leading-relaxed">
+                                                        {selectedReport.analysis_json.competitive_analysis}
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                        {selectedReport.analysis_json?.financial_health &&
+                                            selectedReport.analysis_json.financial_health !== 'N/A' && (
+                                                <div className="glass-card p-6 rounded-2xl border-l-4 border-l-emerald-500/50">
+                                                    <h3 className="text-lg font-semibold mb-3 text-emerald-400">Financial Health</h3>
+                                                    <p className="text-gray-300 text-sm leading-relaxed">
+                                                        {selectedReport.analysis_json.financial_health}
+                                                    </p>
+                                                </div>
+                                            )}
+                                    </div>
+                                )}
                         </motion.div>
                     )}
                 </AnimatePresence>
