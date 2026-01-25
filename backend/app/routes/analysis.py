@@ -45,11 +45,16 @@ async def analyze_pitch_deck(
     supabase = get_supabase_client()
     
     # 1. Fetch User Thesis
-    profile_response = supabase.table("investor_profiles").select("*").eq("user_id", user_id).maybe_single().execute()
-    if not profile_response.data:
+    try:
+        profile_response = supabase.table("investor_profiles").select("*").eq("user_id", user_id).maybe_single().execute()
+        if not profile_response.data:
+            raise HTTPException(status_code=400, detail="Please complete your Investor Profile (Thesis) before analyzing deals.")
+        thesis_data = profile_response.data
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching investor profile: {e}")
         raise HTTPException(status_code=400, detail="Please complete your Investor Profile (Thesis) before analyzing deals.")
-    
-    thesis_data = profile_response.data
     
     # 2. Extract Content
     deck_text = ""
