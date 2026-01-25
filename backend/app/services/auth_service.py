@@ -86,8 +86,14 @@ async def authenticate_user(email: str, password: str) -> Tuple[Optional[dict], 
         }, None
         
     except Exception as e:
-        error_msg = str(e)
+        error_msg = str(e).lower()
         logger.error(f"Authentication error for {email}: {error_msg}", exc_info=True)
+        
+        if "invalid login credentials" in error_msg or "invalid credentials" in error_msg:
+             return None, "Incorrect email or password"
+        elif "email not confirmed" in error_msg:
+             return None, "Please verify your email address before signing in"
+             
         return None, "Unable to sign in. Please check your credentials and try again"
 
 
@@ -154,8 +160,14 @@ async def create_user(email: str, password: str, name: Optional[str] = None) -> 
         }, None
         
     except Exception as e:
-        error_msg = str(e)
+        error_msg = str(e).lower()
         logger.error(f"Registration error for {email}: {error_msg}", exc_info=True)
+        
+        if "user already registered" in error_msg or "already registered" in error_msg:
+             return None, "An account with this email already exists. Please sign in instead."
+        elif "password" in error_msg and ("weak" in error_msg or "short" in error_msg):
+             return None, "Password is too weak. Please use at least 6 characters."
+        
         return None, "Unable to create account. Please check your information and try again"
 
 
