@@ -310,10 +310,13 @@ This will test:
 1. Install Vercel CLI: `npm i -g vercel`
 2. From `frontend/` directory: `vercel`
 3. Follow prompts to deploy
-4. Set environment variable:
-   - `VITE_API_URL`: Your backend URL from Render
+4. Set environment variable in Vercel dashboard:
+   - **Variable Name**: `VITE_API_URL`
+   - **Value**: `https://deal-sourcing-ai-backend.onrender.com/api` (⚠️ MUST include `/api` suffix!)
 
 Alternatively, connect your GitHub repo to Vercel dashboard for automatic deployments.
+
+**Important**: The `/api` suffix is critical! Without it, authentication endpoints will return 404 errors.
 
 ---
 
@@ -355,6 +358,13 @@ Alternatively, connect your GitHub repo to Vercel dashboard for automatic deploy
 - Verify backend is running on `http://localhost:8000`
 - Check `VITE_API_URL` in frontend `.env`
 - Ensure CORS is configured correctly
+
+**"404 Not Found" on login/register**
+- **CRITICAL**: Ensure `VITE_API_URL` includes `/api` suffix
+- ✅ Correct: `VITE_API_URL=https://deal-sourcing-ai-backend.onrender.com/api`
+- ❌ Wrong: `VITE_API_URL=https://deal-sourcing-ai-backend.onrender.com`
+- In Vercel dashboard, update environment variable and redeploy
+- For local development, check `frontend/.env` file
 
 **"Analysis failed"**
 - Check browser console for errors
