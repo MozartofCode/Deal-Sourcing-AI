@@ -6,7 +6,7 @@ import io
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.models import DiligenceReportResponse
-from app.database import get_supabase_client
+from app.database import get_supabase_client, get_authenticated_supabase_client
 from app.services.auth_service import decode_access_token
 from app.services.analysis_service import analyze_deck
 from pypdf import PdfReader
@@ -16,8 +16,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 security = HTTPBearer()
 
-async def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
-    token = credentials.credentials
+def get_user_id_from_token(token: str) -> str:
     payload = decode_access_token(token)
     if not payload or not payload.get("sub"):
         raise HTTPException(status_code=401, detail="Invalid token")
@@ -25,24 +24,22 @@ async def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depend
 
 @router.post("/", response_model=DiligenceReportResponse)
 async def analyze_pitch_deck(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
     file: UploadFile = File(None),
     text_content: str = Form(None),
     company_name: str = Form(None),
     company_domain: str = Form(None),
     stock_ticker: str = Form(None),
     industry: str = Form(None),
-    user_id: str = Depends(get_current_user_id)
 ):
     """
     Analyze a pitch deck (PDF upload or raw text) against the user's thesis.
-    
-    Optional company metadata can be provided to enrich analysis with external data:
-    - company_name: Name of the company (e.g., "Apple Inc.")
-    - company_domain: Company website domain (e.g., "apple.com")
-    - stock_ticker: Stock symbol if public (e.g., "AAPL")
-    - industry: Industry/sector (e.g., "Technology", "Healthcare")
     """
-    supabase = get_supabase_client()
+    token = credentials.credentials
+    user_id = get_user_id_from_token(token)
+    
+    # Use authenticated client
+    supabase = get_authenticated_supabase_client(token)
     
     # 1. Fetch User Thesis
     try:
@@ -120,10 +117,6 @@ async def analyze_pitch_deck(
             "analysis_json": analysis_result
         }
         
-        # Store full raw text only if needed? Nah, privacy/storage. Just metadata + analysis.
-        # But we might want to store 'deck_content' link if we uploaded to storage types, 
-        # but here we just processed in-memory.
-        
         response = supabase.table("diligence_reports").insert(record).execute()
         
         if not response.data:
@@ -137,7 +130,12 @@ async def analyze_pitch_deck(
     
     
 @router.get("/", response_model=list[DiligenceReportResponse])
-async def get_my_reports(user_id: str = Depends(get_current_user_id)):
-    supabase = get_supabase_client()
+async def get_my_reports(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    user_id = get_user_id_from_token(token)
+    
+    # Use authenticated client for RLS
+    supabase = get_authenticated_supabase_client(token)
+    
     response = supabase.table("diligence_reports").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
     return response.data

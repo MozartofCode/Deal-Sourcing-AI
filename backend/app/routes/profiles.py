@@ -5,7 +5,7 @@ import logging
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.models import InvestorProfileCreate, InvestorProfileResponse
-from app.database import get_supabase_client
+from app.database import get_supabase_client, get_authenticated_supabase_client
 from app.services.auth_service import decode_access_token
 
 logger = logging.getLogger(__name__)
@@ -13,16 +13,20 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 security = HTTPBearer()
 
-async def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
-    token = credentials.credentials
+def get_user_id_from_token(token: str) -> str:
     payload = decode_access_token(token)
     if not payload or not payload.get("sub"):
         raise HTTPException(status_code=401, detail="Invalid token")
     return payload.get("sub")
 
 @router.get("/", response_model=InvestorProfileResponse)
-async def get_my_profile(user_id: str = Depends(get_current_user_id)):
-    supabase = get_supabase_client()
+async def get_my_profile(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    user_id = get_user_id_from_token(token)
+    
+    # Use authenticated client to pass RLS
+    supabase = get_authenticated_supabase_client(token)
+    
     try:
         response = supabase.table("investor_profiles").select("*").eq("user_id", user_id).maybe_single().execute()
         if not response.data:
@@ -41,8 +45,13 @@ async def get_my_profile(user_id: str = Depends(get_current_user_id)):
         raise HTTPException(status_code=500, detail="Error fetching profile")
 
 @router.post("/", response_model=InvestorProfileResponse)
-async def create_or_update_profile(profile: InvestorProfileCreate, user_id: str = Depends(get_current_user_id)):
-    supabase = get_supabase_client()
+async def create_or_update_profile(profile: InvestorProfileCreate, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    user_id = get_user_id_from_token(token)
+    
+    # Use authenticated client to pass RLS
+    supabase = get_authenticated_supabase_client(token)
+    
     try:
         # Check if exists
         idx_data = None
