@@ -18,7 +18,7 @@ const Register = () => {
         setLoading(true);
         try {
             await register(email, password, name);
-            navigate('/setup');
+            navigate('/dashboard');
         } catch (err) {
             setError(err.response?.data?.detail || 'Failed to register');
         } finally {
