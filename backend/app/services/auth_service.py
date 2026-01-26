@@ -78,11 +78,21 @@ async def authenticate_user(email: str, password: str) -> Tuple[Optional[dict], 
             created_at = datetime.utcnow()
         
         logger.info(f"Successfully authenticated user: {email}")
+        
+        # Get session tokens
+        access_token = None
+        refresh_token = None
+        if auth_response.session:
+            access_token = auth_response.session.access_token
+            refresh_token = auth_response.session.refresh_token
+            
         return {
             "id": user.id,
             "email": user.email or email,
             "name": name,
-            "created_at": created_at
+            "created_at": created_at,
+            "access_token": access_token,
+            "refresh_token": refresh_token
         }, None
         
     except Exception as e:
@@ -152,11 +162,21 @@ async def create_user(email: str, password: str, name: Optional[str] = None) -> 
             created_at = datetime.utcnow()
         
         logger.info(f"Successfully created user: {email}")
+        
+        # Get session tokens if available (auto sign-in)
+        access_token = None
+        refresh_token = None
+        if auth_response.session:
+            access_token = auth_response.session.access_token
+            refresh_token = auth_response.session.refresh_token
+            
         return {
             "id": user.id,
             "email": user.email or email,
             "name": name,
-            "created_at": created_at
+            "created_at": created_at,
+            "access_token": access_token,
+            "refresh_token": refresh_token
         }, None
         
     except Exception as e:

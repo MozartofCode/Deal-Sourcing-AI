@@ -42,11 +42,15 @@ async def register(user_data: UserCreate):
         )
     
     # Create access token
-    access_token_expires = timedelta(minutes=60 * 24 * 7)  # 7 days
-    access_token = create_access_token(
-        data={"sub": user["id"]},
-        expires_delta=access_token_expires
-    )
+    # Use the access token from Supabase if available
+    if user.get("access_token"):
+        access_token = user.get("access_token")
+    else:
+        access_token_expires = timedelta(minutes=60 * 24 * 7)  # 7 days
+        access_token = create_access_token(
+            data={"sub": user["id"]},
+            expires_delta=access_token_expires
+        )
     
     # New users don't have a profile yet
     user["has_profile"] = False
@@ -78,34 +82,23 @@ async def login(user_data: UserLogin):
         )
     
     # Create access token
-    access_token_expires = timedelta(minutes=60 * 24 * 7)  # 7 days
-    access_token = create_access_token(
-        data={"sub": user["id"]},
-        expires_delta=access_token_expires
-    )
+    # Use the access token from Supabase if available
+    if user.get("access_token"):
+        access_token = user.get("access_token")
+        # We can also pass the refresh token if we want to handle token refreshing
+        # refresh_token = user.get("refresh_token")
+    else:
+        # Fallback to local token creation (only works if JWT_SECRET_KEY matches Supabase)
+        access_token_expires = timedelta(minutes=60 * 24 * 7)  # 7 days
+        access_token = create_access_token(
+            data={"sub": user["id"]},
+            expires_delta=access_token_expires
+        )
     
     # Check if user has a profile
     # Use the authenticated client with the new token to pass RLS
     from app.database import get_authenticated_supabase_client
     try:
-        # We need to use the Supabase JWT (from the auth response) if we want to be "that user" on Supabase side
-        # BUT, our create_access_token creates a fastAPI-specific token signed by US.
-        # However, data storage uses Supabase. Supabase expects ITS OWN tokens or Service Key.
-        #
-        # WAIT. authenticate_user returns a user dict. It does NOT return the Supabase session token?
-        # authenticate_user calls supabase.auth.sign_in_with_password.
-        # We discarded the session!
-        #
-        # If we are using Supabase Auth, we should return the Supabase Token to the frontend or use it.
-        # Our auth_service.py wraps Supabase.
-        # 
-        # Let's check auth_service.py. It creates its OWN JWT?
-        # create_access_token uses SECRET_KEY.
-        # If SECRET_KEY is the Supabase JWT Secret, then our tokens ARE Supabase tokens.
-        # .env says JWT_SECRET_KEY.
-        #
-        # Assuming our token works for Supabase RLS:
-        
         supabase_auth = get_authenticated_supabase_client(access_token)
         # Check if profile exists
         profile_response = supabase_auth.table("investor_profiles").select("id").eq("user_id", user["id"]).maybe_single().execute()
