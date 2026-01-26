@@ -34,15 +34,16 @@ async def get_my_profile(credentials: HTTPAuthorizationCredentials = Depends(sec
         return response.data
     except Exception as e:
         # Check for Postgrest 204 (No Content) error which happens on maybe_single empty result
+        # The logs typically show: {'message': 'Missing response', 'code': '204', ...}
         error_str = str(e)
-        if "204" in error_str and "Missing response" in error_str:
+        if "204" in error_str or "'code': '204'" in error_str:
              raise HTTPException(status_code=404, detail="Profile not found")
              
         logger.error(f"Error fetching profile: {e}")
-        # If specific 404 was raised, re-raise it
+        # If specific 404 was raised above, re-raise it
         if isinstance(e, HTTPException):
             raise e
-        raise HTTPException(status_code=500, detail="Error fetching profile")
+        raise HTTPException(status_code=500, detail=f"Error fetching profile: {str(e)}")
 
 @router.post("/", response_model=InvestorProfileResponse)
 async def create_or_update_profile(profile: InvestorProfileCreate, credentials: HTTPAuthorizationCredentials = Depends(security)):
@@ -60,7 +61,7 @@ async def create_or_update_profile(profile: InvestorProfileCreate, credentials: 
             idx_data = idx.data
         except Exception as check_e:
             # Handle 204 Missing response (means no profile found)
-            if "204" in str(check_e) and "Missing response" in str(check_e):
+            if "204" in str(check_e) or "'code': '204'" in str(check_e):
                 idx_data = None
             else:
                 raise check_e
