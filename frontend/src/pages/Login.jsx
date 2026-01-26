@@ -18,12 +18,8 @@ const Login = () => {
         try {
             const data = await login(email, password);
 
-            // Check if user has a profile
-            if (data.user && data.user.has_profile) {
-                navigate('/dashboard');
-            } else {
-                navigate('/setup');
-            }
+            // Always go to dashboard, skipping setup
+            navigate('/dashboard');
         } catch (err) {
             setError(err.response?.data?.detail || 'Failed to login');
         } finally {
