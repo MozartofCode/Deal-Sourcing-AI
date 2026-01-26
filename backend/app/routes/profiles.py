@@ -28,17 +28,13 @@ async def get_my_profile(credentials: HTTPAuthorizationCredentials = Depends(sec
     supabase = get_authenticated_supabase_client(token)
     
     try:
-        response = supabase.table("investor_profiles").select("*").eq("user_id", user_id).maybe_single().execute()
-        if not response.data:
+        response = supabase.table("investor_profiles").select("*").eq("user_id", user_id).limit(1).execute()
+        
+        if not response.data or len(response.data) == 0:
             raise HTTPException(status_code=404, detail="Profile not found")
-        return response.data
+            
+        return response.data[0]
     except Exception as e:
-        # Check for Postgrest 204 (No Content) error which happens on maybe_single empty result
-        # The logs typically show: {'message': 'Missing response', 'code': '204', ...}
-        error_str = str(e)
-        if "204" in error_str or "'code': '204'" in error_str:
-             raise HTTPException(status_code=404, detail="Profile not found")
-             
         logger.error(f"Error fetching profile: {e}")
         # If specific 404 was raised above, re-raise it
         if isinstance(e, HTTPException):
@@ -57,14 +53,11 @@ async def create_or_update_profile(profile: InvestorProfileCreate, credentials: 
         # Check if exists
         idx_data = None
         try:
-            idx = supabase.table("investor_profiles").select("id").eq("user_id", user_id).maybe_single().execute()
-            idx_data = idx.data
+            idx = supabase.table("investor_profiles").select("id").eq("user_id", user_id).limit(1).execute()
+            idx_data = idx.data[0] if idx.data and len(idx.data) > 0 else None
         except Exception as check_e:
-            # Handle 204 Missing response (means no profile found)
-            if "204" in str(check_e) or "'code': '204'" in str(check_e):
-                idx_data = None
-            else:
-                raise check_e
+            logger.error(f"Error checking profile existence: {check_e}")
+            idx_data = None
         
         data = profile.model_dump()
         data["user_id"] = user_id
