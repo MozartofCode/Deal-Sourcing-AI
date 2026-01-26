@@ -146,12 +146,14 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
         user_response = supabase.auth.get_user(token)
         
         if user_response.user is None:
+            logger.error(f"Supabase returned no user for token! Response: {user_response}")
             raise HTTPException(
                 status_code=404,
                 detail="User not found"
             )
         
         user = user_response.user
+        # logger.info(f"Debug: Found user {user.id} email={user.email}")
         user_metadata = user.user_metadata or {}
         name = user_metadata.get("name") or user_metadata.get("full_name")
         

@@ -224,5 +224,10 @@ async def get_user_by_id(user_id: str) -> Optional[dict]:
             "created_at": created_at
         }
     except Exception as e:
+        error_msg = str(e).lower()
+        if "forbidden" in error_msg or "403" in error_msg or "user not allowed" in error_msg:
+            logger.warning(f"Permission denied fetching user {user_id} (check SUPABASE_SERVICE_ROLE_KEY): {e}")
+            return None
+            
         logger.error(f"Get user error for {user_id}: {e}", exc_info=True)
         return None
