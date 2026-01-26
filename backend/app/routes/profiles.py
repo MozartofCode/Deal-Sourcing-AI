@@ -70,10 +70,10 @@ async def create_or_update_profile(profile: InvestorProfileCreate, credentials: 
         
         if idx_data:
             # Update
-            response = supabase.table("investor_profiles").update(data).eq("user_id", user_id).execute()
+            response = supabase.table("investor_profiles").update(data).eq("user_id", user_id).select().execute()
         else:
             # Insert
-            response = supabase.table("investor_profiles").insert(data).execute()
+            response = supabase.table("investor_profiles").insert(data).select().execute()
             
         if not response.data:
             raise HTTPException(status_code=500, detail="Failed to save profile")

@@ -9,7 +9,6 @@ from app.services.auth_service import (
     authenticate_user,
     create_user,
     create_access_token,
-    get_user_by_id,
     decode_access_token,
 )
 from datetime import timedelta

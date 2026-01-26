@@ -117,7 +117,7 @@ async def analyze_pitch_deck(
             "analysis_json": analysis_result
         }
         
-        response = supabase.table("diligence_reports").insert(record).execute()
+        response = supabase.table("diligence_reports").insert(record).select().execute()
         
         if not response.data:
              raise HTTPException(status_code=500, detail="Failed to save analysis record")
