@@ -84,7 +84,7 @@ Create a `.env` file in `backend/` directory:
 ```env
 # Supabase Configuration
 SUPABASE_URL=your_supabase_url_here
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+SUPABASE_ANON_KEY=your_supabase_anon_key_here
 
 # JWT Secret
 JWT_SECRET_KEY=your_jwt_secret_key_here
@@ -326,7 +326,7 @@ Alternatively, connect your GitHub repo to Vercel dashboard for automatic deploy
 - ✅ JWT tokens for secure authentication
 - ✅ Password hashing with bcrypt
 - ✅ CORS configuration for production
-- ✅ Service role keys for backend-only operations
+- ✅ Anon keys for backend operations
 - ✅ No sensitive data in git repository
 
 **Important**: Never commit `.env` files to version control!
@@ -343,7 +343,7 @@ Alternatively, connect your GitHub repo to Vercel dashboard for automatic deploy
 - Restart the backend server
 
 **"Failed to connect to Supabase"**
-- Verify `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`
+- Verify `SUPABASE_URL` and `SUPABASE_ANON_KEY`
 - Check Supabase project is active
 - Ensure database tables are created
 
