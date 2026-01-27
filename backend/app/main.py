@@ -75,7 +75,6 @@ async def add_cors_headers(request: Request, call_next):
     return response
 
 # Include routers
-app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(profiles.router, prefix="/api/profiles", tags=["profiles"])
 app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
 

@@ -17,10 +17,10 @@ const Landing = () => {
                     <span className="text-2xl font-bold tracking-tighter text-white">Scout</span>
                 </div>
                 <div className="flex gap-4">
-                    <Link to="/login" className="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">
-                        Log In
+                    <Link to="/setup" className="px-5 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                        Enter App
                     </Link>
-                    <Link to="/register" className="px-5 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-gray-200 transition-colors">
+                    <Link to="/setup" className="px-5 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-gray-200 transition-colors">
                         Get Started
                     </Link>
                 </div>
@@ -50,7 +50,7 @@ const Landing = () => {
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link to="/register" className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white transition-all duration-200 bg-cyan-600 rounded-full hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-600">
+                        <Link to="/setup" className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white transition-all duration-200 bg-cyan-600 rounded-full hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-600">
                             Start Analyzing Now
                             <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             <div className="absolute -inset-3 rounded-full bg-cyan-500/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />

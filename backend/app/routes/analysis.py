@@ -3,28 +3,23 @@ Analysis Routes
 """
 import logging
 import io
+import logging
+import io
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.models import DiligenceReportResponse
-from app.database import get_supabase_client, get_authenticated_supabase_client
-from app.services.auth_service import decode_access_token
+from app.database import get_supabase_client
 from app.services.analysis_service import analyze_deck
 from pypdf import PdfReader
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
-security = HTTPBearer()
 
-def get_user_id_from_token(token: str) -> str:
-    payload = decode_access_token(token)
-    if not payload or not payload.get("sub"):
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return payload.get("sub")
+# correct way to define hardcoded user id
+HARDCODED_USER_ID = "00000000-0000-0000-0000-000000000000"
 
 @router.post("/", response_model=DiligenceReportResponse)
 async def analyze_pitch_deck(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
     file: UploadFile = File(None),
     text_content: str = Form(None),
     company_name: str = Form(None),
@@ -35,16 +30,18 @@ async def analyze_pitch_deck(
     """
     Analyze a pitch deck (PDF upload or raw text) against the user's thesis.
     """
-    token = credentials.credentials
-    user_id = get_user_id_from_token(token)
+    user_id = HARDCODED_USER_ID
     
-    # Use authenticated client
-    supabase = get_authenticated_supabase_client(token)
+    # Use standard client
+    supabase = get_supabase_client()
     
     # 1. Fetch User Thesis
     try:
         profile_response = supabase.table("investor_profiles").select("*").eq("user_id", user_id).maybe_single().execute()
         if not profile_response.data:
+            # If no profile, we can't analyze against a thesis.
+            # Maybe return a generic error or allow analysis without thesis?
+            # For now, keep the restriction but message implies setup needed.
             raise HTTPException(status_code=400, detail="Please complete your Investor Profile (Thesis) before analyzing deals.")
         thesis_data = profile_response.data
     except HTTPException:
@@ -130,12 +127,11 @@ async def analyze_pitch_deck(
     
     
 @router.get("/", response_model=list[DiligenceReportResponse])
-async def get_my_reports(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    user_id = get_user_id_from_token(token)
+async def get_my_reports():
+    user_id = HARDCODED_USER_ID
     
-    # Use authenticated client for RLS
-    supabase = get_authenticated_supabase_client(token)
+    # Use standard client
+    supabase = get_supabase_client()
     
     response = supabase.table("diligence_reports").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
     return response.data

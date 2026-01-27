@@ -160,11 +160,8 @@ const Dashboard = () => {
                     <div className="flex items-center justify-between mb-4 px-2">
                         <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600" />
-                            <div className="text-sm font-medium">{user?.name || user?.email}</div>
+                            <div className="text-sm font-medium">{user?.name || user?.email || 'Invest'}</div>
                         </div>
-                        <button onClick={logout} className="text-gray-500 hover:text-white transition-colors">
-                            <LogOut className="w-5 h-5" />
-                        </button>
                     </div>
                 </div>
             </aside>

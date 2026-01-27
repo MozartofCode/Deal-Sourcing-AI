@@ -3,35 +3,30 @@ Investor Profile Routes
 """
 import logging
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.models import InvestorProfileCreate, InvestorProfileResponse
-from app.database import get_supabase_client, get_authenticated_supabase_client
-from app.services.auth_service import decode_access_token
+from app.database import get_supabase_client
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
-security = HTTPBearer()
 
-def get_user_id_from_token(token: str) -> str:
-    payload = decode_access_token(token)
-    if not payload or not payload.get("sub"):
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return payload.get("sub")
+# correct way to define hardcoded user id
+HARDCODED_USER_ID = "00000000-0000-0000-0000-000000000000"
 
 @router.get("/", response_model=InvestorProfileResponse)
-async def get_my_profile(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    user_id = get_user_id_from_token(token)
+async def get_my_profile():
+    user_id = HARDCODED_USER_ID
     
-    # Use authenticated client to pass RLS
-    supabase = get_authenticated_supabase_client(token)
+    # Use standard client (assumes RLS is disabled or allows public access for this user)
+    supabase = get_supabase_client()
     
     try:
         response = supabase.table("investor_profiles").select("*").eq("user_id", user_id).limit(1).execute()
         
         if not response.data or len(response.data) == 0:
+            # Return empty profile or 404. 
+            # If 404, frontend might redirect to setup.
             raise HTTPException(status_code=404, detail="Profile not found")
             
         return response.data[0]
@@ -42,12 +37,11 @@ async def get_my_profile(credentials: HTTPAuthorizationCredentials = Depends(sec
         raise HTTPException(status_code=500, detail="Failed to fetch profile")
 
 @router.post("/", response_model=InvestorProfileResponse)
-async def create_or_update_profile(profile: InvestorProfileCreate, credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    user_id = get_user_id_from_token(token)
+async def create_or_update_profile(profile: InvestorProfileCreate):
+    user_id = HARDCODED_USER_ID
     
-    # Use authenticated client to pass RLS
-    supabase = get_authenticated_supabase_client(token)
+    # Use standard client
+    supabase = get_supabase_client()
     
     try:
         # Check if exists
