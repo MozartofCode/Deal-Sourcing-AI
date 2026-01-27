@@ -1,5 +1,5 @@
 """
-Analysis Routes (In-Memory Version)
+Analysis Routes (Local File Storage)
 """
 import logging
 import io
@@ -8,15 +8,12 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
 from app.models import DiligenceReportResponse
 from app.services.analysis_service import analyze_deck
-from app.routes.profiles import get_current_profile
+from app.storage import get_profile, get_reports, save_report
 from pypdf import PdfReader
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
-
-# In-memory storage for reports
-REPORTS_DB = []
 
 @router.post("/", response_model=DiligenceReportResponse)
 async def analyze_pitch_deck(
@@ -31,8 +28,8 @@ async def analyze_pitch_deck(
     Analyze a pitch deck (PDF upload or raw text) against the user's thesis.
     """
     
-    # 1. Fetch User Thesis from in-memory profile
-    thesis_data = get_current_profile()
+    # 1. Fetch User Thesis from file storage
+    thesis_data = get_profile()
     if not thesis_data:
         raise HTTPException(status_code=400, detail="Please complete your Investor Profile (Thesis) before analyzing deals.")
     
@@ -97,7 +94,7 @@ async def analyze_pitch_deck(
             "analysis_json": analysis_result
         }
         
-        REPORTS_DB.insert(0, record) # Add to beginning of list
+        save_report(record)
         
         return record
         
@@ -108,4 +105,4 @@ async def analyze_pitch_deck(
     
 @router.get("/", response_model=list[DiligenceReportResponse])
 async def get_my_reports():
-    return REPORTS_DB
+    return get_reports()
