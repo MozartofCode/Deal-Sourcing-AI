@@ -65,11 +65,13 @@ async def analyze_pitch_deck(
         raise HTTPException(status_code=400, detail="No deck content provided (file or text)")
         
     deck_text_stripped = deck_text.strip()
-    if len(deck_text_stripped) < 10:
-        logger.warning(f"Deck content too short. Length: {len(deck_text_stripped)}")
-        raise HTTPException(
+    # Remove length check to allow shorter content or failed extractions (which might still have metadata)
+    deck_text_stripped = deck_text.strip()
+    if not deck_text_stripped and not filename:
+        # Only error if absolutely nothing exists
+         raise HTTPException(
             status_code=400, 
-            detail="Could not extract enough text from the file. If this is a PDF, it might be a scanned image without selectable text. Please upload a text-based PDF or paste the text directly."
+            detail="Could not extract any text from the file."
         )
     
     # 3. Prepare company metadata for external API enrichment

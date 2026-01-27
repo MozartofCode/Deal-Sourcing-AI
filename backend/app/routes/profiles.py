@@ -2,6 +2,7 @@
 Investor Profile Routes (Local File Storage)
 """
 import logging
+from typing import Optional
 import uuid
 import json
 from pathlib import Path
@@ -14,12 +15,12 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-@router.get("/", response_model=InvestorProfileResponse)
+@router.get("/", response_model=Optional[InvestorProfileResponse])
 async def get_my_profile():
     profile = get_profile()
     
     if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
+        return None
         
     return profile
 

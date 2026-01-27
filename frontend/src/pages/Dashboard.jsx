@@ -32,16 +32,19 @@ const Dashboard = () => {
 
     const fetchProfileAndReports = async () => {
         try {
-            await axios.get(`${API_URL}/profiles/`);
+            const profileRes = await axios.get(`${API_URL}/profiles/`);
+            if (!profileRes.data) {
+                navigate('/setup');
+                return;
+            }
+
             const res = await axios.get(`${API_URL}/analysis/`);
             setReports(res.data);
             if (res.data.length > 0) {
                 setSelectedReport(res.data[0]);
             }
         } catch (error) {
-            if (error.response?.status === 404) {
-                navigate('/setup');
-            }
+            console.error("Dashboard data fetch error:", error);
         }
     };
 
