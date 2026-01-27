@@ -47,7 +47,9 @@ async def analyze_pitch_deck(
                 pdf_file = io.BytesIO(contents)
                 reader = PdfReader(pdf_file)
                 for page in reader.pages:
-                    deck_text += page.extract_text() + "\n"
+                    extracted = page.extract_text()
+                    if extracted:
+                        deck_text += extracted + "\n"
             except Exception as e:
                 logger.error(f"PDF extraction failed: {e}")
                 raise HTTPException(status_code=400, detail="Failed to read PDF file")
@@ -62,8 +64,13 @@ async def analyze_pitch_deck(
     else:
         raise HTTPException(status_code=400, detail="No deck content provided (file or text)")
         
-    if len(deck_text.strip()) < 50:
-        raise HTTPException(status_code=400, detail="Deck content too short for analysis.")
+    deck_text_stripped = deck_text.strip()
+    if len(deck_text_stripped) < 10:
+        logger.warning(f"Deck content too short. Length: {len(deck_text_stripped)}")
+        raise HTTPException(
+            status_code=400, 
+            detail="Could not extract enough text from the file. If this is a PDF, it might be a scanned image without selectable text. Please upload a text-based PDF or paste the text directly."
+        )
     
     # 3. Prepare company metadata for external API enrichment
     company_metadata = None
