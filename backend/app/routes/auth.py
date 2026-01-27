@@ -170,14 +170,13 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
             created_at = datetime.utcnow()
             
         # Check if profile exists using authenticated client
-        has_profile = True # FORCE TRUE for now to bypass setup issues
-        # try:
-        #     profile_response = supabase.table("investor_profiles").select("id").eq("user_id", user.id).limit(1).execute()
-        #     has_profile = bool(profile_response.data)
-        # except Exception as e:
-        #     # If 204 or other error, assume no profile
-        #     logger.error(f"Error checking profile existence: {e}")
-        #     has_profile = False
+        try:
+            profile_response = supabase.table("investor_profiles").select("id").eq("user_id", user.id).limit(1).execute()
+            has_profile = bool(profile_response.data)
+        except Exception as e:
+            # If 204 or other error, assume no profile
+            logger.error(f"Error checking profile existence: {e}")
+            has_profile = False
         
         return UserResponse(
             id=user.id,

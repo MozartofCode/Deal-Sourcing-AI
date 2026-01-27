@@ -42,6 +42,10 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         const res = await axios.post(`${API_URL}/auth/login`, { email, password });
         const { access_token, user } = res.data;
+
+        // Set header immediately to avoid race conditions with navigation
+        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+
         localStorage.setItem('token', access_token);
         setToken(access_token);
         setUser(user);
@@ -51,6 +55,10 @@ export const AuthProvider = ({ children }) => {
     const register = async (email, password, name) => {
         const res = await axios.post(`${API_URL}/auth/register`, { email, password, name });
         const { access_token, user } = res.data;
+
+        // Set header immediately to avoid race conditions with navigation
+        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+
         localStorage.setItem('token', access_token);
         setToken(access_token);
         setUser(user);
