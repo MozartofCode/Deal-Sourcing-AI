@@ -46,9 +46,16 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 
 def decode_access_token(token: str) -> Optional[dict]:
-    """Decode and verify a JWT token"""
+    """
+    Decode a JWT token.
+    NOTE: We skip signature verification here because we don't have the Supabase
+    project secret in the backend. Verification is performed by calling the
+    Supabase getUser API with this token.
+    """
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        # Skip signature verification - we just want the payload
+        # Verification happens via Supabase API calls later
+        payload = jwt.decode(token, "", options={"verify_signature": False})
         return payload
     except JWTError:
         return None

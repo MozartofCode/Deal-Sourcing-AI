@@ -103,11 +103,11 @@ async def login(user_data: UserLogin):
     try:
         supabase_auth = get_authenticated_supabase_client(access_token)
         # Check if profile exists
-        profile_response = supabase_auth.table("investor_profiles").select("id").eq("user_id", user["id"]).maybe_single().execute()
-        user["has_profile"] = bool(profile_response.data)
+        profile_response = supabase_auth.table("investor_profiles").select("id").eq("user_id", user["id"]).limit(1).execute()
+        user["has_profile"] = bool(profile_response.data and len(profile_response.data) > 0)
     except Exception as e:
         detailed_error = format_error_message(e)
-        logger.error(f"Error checking profile existence: {detailed_error}")
+        logger.warning(f"Note: Profile check returned no data or failed (might be new user): {detailed_error}")
         user["has_profile"] = False
     
     logger.info(f"Successful login for user: {user_data.email}")
@@ -175,10 +175,10 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
             # Must use authenticated client to pass RLS for DB queries
             auth_supabase = get_authenticated_supabase_client(token)
             profile_response = auth_supabase.table("investor_profiles").select("id").eq("user_id", user.id).limit(1).execute()
-            has_profile = bool(profile_response.data)
+            has_profile = bool(profile_response.data and len(profile_response.data) > 0)
         except Exception as e:
             # If 204 or other error, assume no profile
-            logger.error(f"Error checking profile existence: {e}")
+            logger.warning(f"Note: Profile check returned no data or failed (might be new user): {e}")
             has_profile = False
         
         return UserResponse(
