@@ -16,6 +16,26 @@ COMPANIES_API_BASE = "https://api.thecompaniesapi.com/v1"
 ALPHA_VANTAGE_BASE = "https://www.alphavantage.co/query"
 NEWS_API_BASE = "https://newsapi.org/v2"
 
+def format_api_error(e: Exception, context: str) -> str:
+    """Helper to format detailed API errors"""
+    error_msg = f"{context}: {str(e)}"
+    
+    # Check for HTTPX response errors to get API-specific messages
+    if hasattr(e, 'response') and e.response:
+        try:
+            # Try to get JSON error
+            error_data = e.response.json()
+            error_msg = f"{error_msg} | Response: {error_data}"
+        except:
+            # Fallback to text
+            try:
+                error_msg = f"{error_msg} | Response: {e.response.text}"
+            except:
+                pass
+                
+    return error_msg
+
+
 
 class CompaniesAPIClient:
     """Client for The Companies API - provides company data and competitive analysis"""
@@ -39,7 +59,7 @@ class CompaniesAPIClient:
                 response.raise_for_status()
                 return response.json()
         except Exception as e:
-            logger.error(f"Companies API error for {domain}: {str(e)}")
+            logger.error(format_api_error(e, f"Companies API error for {domain}"))
             return None
     
     @staticmethod
@@ -62,7 +82,7 @@ class CompaniesAPIClient:
                 data = response.json()
                 return data.get("companies", [])
         except Exception as e:
-            logger.error(f"Companies API similar search error: {str(e)}")
+            logger.error(format_api_error(e, "Companies API similar search error"))
             return None
     
     @staticmethod
@@ -85,7 +105,7 @@ class CompaniesAPIClient:
                 data = response.json()
                 return data.get("companies", [])
         except Exception as e:
-            logger.error(f"Companies API industry search error: {str(e)}")
+            logger.error(format_api_error(e, "Companies API industry search error"))
             return None
 
 
@@ -121,7 +141,7 @@ class AlphaVantageClient:
                     
                 return data
         except Exception as e:
-            logger.error(f"Alpha Vantage overview error for {symbol}: {str(e)}")
+            logger.error(format_api_error(e, f"Alpha Vantage overview error for {symbol}"))
             return None
     
     @staticmethod
@@ -152,7 +172,7 @@ class AlphaVantageClient:
                     
                 return data.get("Global Quote", {})
         except Exception as e:
-            logger.error(f"Alpha Vantage quote error for {symbol}: {str(e)}")
+            logger.error(format_api_error(e, f"Alpha Vantage quote error for {symbol}"))
             return None
     
     @staticmethod
@@ -183,7 +203,7 @@ class AlphaVantageClient:
                     
                 return data
         except Exception as e:
-            logger.error(f"Alpha Vantage income statement error for {symbol}: {str(e)}")
+            logger.error(format_api_error(e, f"Alpha Vantage income statement error for {symbol}"))
             return None
 
 
@@ -222,7 +242,7 @@ class NewsAPIClient:
                     
                 return data.get("articles", [])
         except Exception as e:
-            logger.error(f"News API search error for {company_name}: {str(e)}")
+            logger.error(format_api_error(e, f"News API search error for {company_name}"))
             return None
     
     @staticmethod
@@ -257,7 +277,7 @@ class NewsAPIClient:
                     
                 return data.get("articles", [])
         except Exception as e:
-            logger.error(f"News API industry trends error: {str(e)}")
+            logger.error(format_api_error(e, "News API industry trends error"))
             return None
     
     @staticmethod
@@ -288,7 +308,7 @@ class NewsAPIClient:
                     
                 return data.get("articles", [])
         except Exception as e:
-            logger.error(f"News API headlines error: {str(e)}")
+            logger.error(format_api_error(e, "News API headlines error"))
             return None
 
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { logError } from '../lib/utils';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -10,36 +11,27 @@ const ProfileSetup = () => {
     const [loading, setLoading] = useState(false);
     const [profileExists, setProfileExists] = useState(false);
     const [formData, setFormData] = useState({
-        thesis: '',
-        min_ticket_size: '',
-        max_ticket_size: '',
-        target_industries: '',
-        geography: '',
-        investment_stage: '',
-        expected_return: ''
+        thesis: ''
     });
 
-    // Check if profile already exists to pre-fill?
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const res = await axios.get(`${API_URL}/profiles/`);
                 if (res.data) {
                     setProfileExists(true);
-                    const p = res.data;
                     setFormData({
-                        thesis: p.thesis || '',
-                        min_ticket_size: p.min_ticket_size || '',
-                        max_ticket_size: p.max_ticket_size || '',
-                        target_industries: p.target_industries ? p.target_industries.join(', ') : '',
-                        geography: p.geography || '',
-                        investment_stage: p.investment_stage || '',
-                        expected_return: p.expected_return || ''
+                        thesis: res.data.thesis || ''
                     });
                 }
             } catch (e) {
                 // Ignore 404 - profile doesn't exist yet
-                setProfileExists(false);
+                if (e.response && e.response.status === 404) {
+                    setProfileExists(false);
+                } else {
+                    logError("ProfileSetup/fetchProfile", e);
+                    setProfileExists(false);
+                }
             }
         };
         fetchProfile();
@@ -53,18 +45,11 @@ const ProfileSetup = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const payload = {
-                ...formData,
-                min_ticket_size: formData.min_ticket_size ? parseFloat(formData.min_ticket_size) : null,
-                max_ticket_size: formData.max_ticket_size ? parseFloat(formData.max_ticket_size) : null,
-                target_industries: formData.target_industries.split(',').map(s => s.trim()).filter(Boolean)
-            };
-
-            await axios.post(`${API_URL}/profiles/`, payload);
+            await axios.post(`${API_URL}/profiles/`, formData);
             navigate('/dashboard');
         } catch (error) {
-            console.error(error);
-            alert('Failed to save profile');
+            const msg = logError("ProfileSetup/submit", error);
+            alert(`Failed to save profile: ${msg}`);
         } finally {
             setLoading(false);
         }
@@ -92,74 +77,12 @@ const ProfileSetup = () => {
                         <textarea
                             name="thesis"
                             required
-                            rows={4}
+                            rows={6}
                             className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none transition-all resize-none"
                             placeholder="e.g. We invest in B2B SaaS companies in Europe with strong PLG motion..."
                             value={formData.thesis}
                             onChange={handleChange}
                         />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Min Ticket Size ($)</label>
-                            <input
-                                type="number"
-                                name="min_ticket_size"
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-cyan-500"
-                                placeholder="50000"
-                                value={formData.min_ticket_size}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Max Ticket Size ($)</label>
-                            <input
-                                type="number"
-                                name="max_ticket_size"
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-cyan-500"
-                                placeholder="500000"
-                                value={formData.max_ticket_size}
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Target Industries (comma separated)</label>
-                        <input
-                            type="text"
-                            name="target_industries"
-                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-cyan-500"
-                            placeholder="Fintech, Healthtech, AI..."
-                            value={formData.target_industries}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Geography</label>
-                            <input
-                                type="text"
-                                name="geography"
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-cyan-500"
-                                placeholder="North America, Global..."
-                                value={formData.geography}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Stage</label>
-                            <input
-                                type="text"
-                                name="investment_stage"
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-cyan-500"
-                                placeholder="Pre-Seed, Series A..."
-                                value={formData.investment_stage}
-                                onChange={handleChange}
-                            />
-                        </div>
                     </div>
 
                     <div className="pt-4 space-y-3">
@@ -168,7 +91,7 @@ const ProfileSetup = () => {
                             disabled={loading}
                             className="w-full py-3 px-4 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-xl transition-colors disabled:opacity-50"
                         >
-                            {loading ? 'Saving Profile...' : (profileExists ? 'Update Profile' : 'Save & Continue')}
+                            {loading ? 'Saving...' : (profileExists ? 'Update Thesis' : 'Save & Continue')}
                         </button>
                         {profileExists && (
                             <button

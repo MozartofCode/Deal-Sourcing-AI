@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { UploadCloud, FileText, CheckCircle, AlertTriangle, XCircle, Plus, ChevronRight, LogOut, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '../lib/utils';
+import { cn, logError } from '../lib/utils';
 import CompanyMetadataForm from '../components/CompanyMetadataForm';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
@@ -75,8 +75,8 @@ const Dashboard = () => {
             });
             setShowMetadataForm(false);
         } catch (error) {
-            console.error(error);
-            alert('Analysis failed: ' + (error.response?.data?.detail || error.message));
+            const msg = logError("Dashboard/upload", error);
+            alert(`Analysis failed: ${msg}`);
         } finally {
             setAnalyzing(false);
         }

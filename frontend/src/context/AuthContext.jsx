@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { logError } from '../lib/utils';
 
 const AuthContext = createContext();
 
@@ -27,7 +28,7 @@ export const AuthProvider = ({ children }) => {
             const res = await axios.get(`${API_URL}/auth/me`);
             setUser(res.data);
         } catch (error) {
-            console.error("Error fetching user", error);
+            logError("AuthContext/fetchUser", error);
             // Only logout if it's an authentication error (401)
             // Other errors might be temporary (500, network issues, etc.)
             if (error.response?.status === 401) {

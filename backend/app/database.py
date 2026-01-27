@@ -9,7 +9,7 @@ load_dotenv()
 
 # Supabase configuration
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")  # Service role key for backend operations
+SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY")  # Using anon key as requested
 
 from supabase.lib.client_options import ClientOptions
 

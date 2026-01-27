@@ -35,25 +35,11 @@ async def get_my_profile(credentials: HTTPAuthorizationCredentials = Depends(sec
             raise HTTPException(status_code=404, detail="Profile not found")
             
         return response.data[0]
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error fetching profile: {e}")
-        # FALLBACK: Return a dummy profile to bypass setup block during debugging
-        # avoiding the 404/500 dead end
-        current_time = datetime.utcnow()
-        dummy_profile = {
-            "id": "dummy_profile_id",
-            "user_id": user_id,
-            "thesis": "General Tech Investment Thesis (Default)",
-            "min_ticket_size": 10000,
-            "max_ticket_size": 500000,
-            "target_industries": ["SaaS", "AI"],
-            "geography": "Global",
-            "investment_stage": "Seed",
-            "expected_return": "10x",
-            "created_at": current_time,
-            "updated_at": current_time
-        }
-        return dummy_profile
+        raise HTTPException(status_code=500, detail="Failed to fetch profile")
 
 @router.post("/", response_model=InvestorProfileResponse)
 async def create_or_update_profile(profile: InvestorProfileCreate, credentials: HTTPAuthorizationCredentials = Depends(security)):

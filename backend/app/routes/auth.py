@@ -10,7 +10,9 @@ from app.services.auth_service import (
     create_user,
     create_access_token,
     decode_access_token,
+    format_error_message,
 )
+
 from datetime import timedelta
 
 logger = logging.getLogger(__name__)
@@ -104,7 +106,8 @@ async def login(user_data: UserLogin):
         profile_response = supabase_auth.table("investor_profiles").select("id").eq("user_id", user["id"]).maybe_single().execute()
         user["has_profile"] = bool(profile_response.data)
     except Exception as e:
-        logger.error(f"Error checking profile existence: {e}")
+        detailed_error = format_error_message(e)
+        logger.error(f"Error checking profile existence: {detailed_error}")
         user["has_profile"] = False
     
     logger.info(f"Successful login for user: {user_data.email}")
@@ -186,9 +189,10 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error fetching user info: {e}", exc_info=True)
+        detailed_error = format_error_message(e)
+        logger.error(f"Error fetching user info: {detailed_error}", exc_info=True)
         raise HTTPException(
             status_code=404,
-            detail="User not found"
+            detail=f"User not found: {detailed_error}"
         )
 

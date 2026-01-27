@@ -16,6 +16,22 @@ SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
+def format_error_message(e: Exception) -> str:
+    """Helper to extract detailed error message from exceptions"""
+    error_msg = str(e)
+    # Handle Supabase/Gotrue error objects which might have 'message' or 'msg'
+    if hasattr(e, 'message'):
+        error_msg = e.message
+    elif hasattr(e, 'msg'):
+        error_msg = e.msg
+    
+    # Check if it has a code
+    if hasattr(e, 'code'):
+        error_msg = f"{error_msg} (Code: {e.code})"
+        
+    return error_msg
+
+
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     """Create a JWT access token for API authentication"""
@@ -96,15 +112,17 @@ async def authenticate_user(email: str, password: str) -> Tuple[Optional[dict], 
         }, None
         
     except Exception as e:
-        error_msg = str(e).lower()
-        logger.error(f"Authentication error for {email}: {error_msg}", exc_info=True)
+        detailed_error = format_error_message(e)
+        logger.error(f"Authentication error for {email}: {detailed_error}", exc_info=True)
         
-        if "invalid login credentials" in error_msg or "invalid credentials" in error_msg:
-             return None, "Incorrect email or password"
-        elif "email not confirmed" in error_msg:
-             return None, "Please verify your email address before signing in"
-             
-        return None, "Unable to sign in. Please check your credentials and try again"
+        error_msg_lower = detailed_error.lower()
+        if "invalid login credentials" in error_msg_lower or "invalid credentials" in error_msg_lower:
+             return None, "Incorrect email or password. Please try again."
+        elif "email not confirmed" in error_msg_lower:
+             return None, "Please verify your email address before signing in. Check your inbox."
+        
+        # Return the actual error message if it helps debugging, but keep it user friendly enough
+        return None, f"Unable to sign in: {detailed_error}"
 
 
 async def create_user(email: str, password: str, name: Optional[str] = None) -> Tuple[Optional[dict], Optional[str]]:
@@ -180,15 +198,16 @@ async def create_user(email: str, password: str, name: Optional[str] = None) -> 
         }, None
         
     except Exception as e:
-        error_msg = str(e).lower()
-        logger.error(f"Registration error for {email}: {error_msg}", exc_info=True)
+        detailed_error = format_error_message(e)
+        logger.error(f"Registration error for {email}: {detailed_error}", exc_info=True)
         
-        if "user already registered" in error_msg or "already registered" in error_msg:
+        error_msg_lower = detailed_error.lower()
+        if "user already registered" in error_msg_lower or "already registered" in error_msg_lower:
              return None, "An account with this email already exists. Please sign in instead."
-        elif "password" in error_msg and ("weak" in error_msg or "short" in error_msg):
+        elif "password" in error_msg_lower and ("weak" in error_msg_lower or "short" in error_msg_lower):
              return None, "Password is too weak. Please use at least 6 characters."
         
-        return None, "Unable to create account. Please check your information and try again"
+        return None, f"Unable to create account: {detailed_error}"
 
 
 async def get_user_by_id(user_id: str) -> Optional[dict]:
@@ -224,10 +243,6 @@ async def get_user_by_id(user_id: str) -> Optional[dict]:
             "created_at": created_at
         }
     except Exception as e:
-        error_msg = str(e).lower()
-        if "forbidden" in error_msg or "403" in error_msg or "user not allowed" in error_msg:
-            logger.warning(f"Permission denied fetching user {user_id} (check SUPABASE_SERVICE_ROLE_KEY): {e}")
-            return None
-            
-        logger.error(f"Get user error for {user_id}: {e}", exc_info=True)
+        detailed_error = format_error_message(e)
+        logger.error(f"Get user error for {user_id}: {detailed_error}", exc_info=True)
         return None
