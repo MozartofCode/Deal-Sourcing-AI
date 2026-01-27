@@ -123,7 +123,7 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
     """
     Get current authenticated user information
     """
-    from app.database import get_authenticated_supabase_client
+    from app.database import get_authenticated_supabase_client, get_supabase_client
     from datetime import datetime
     
     token = credentials.credentials
@@ -144,9 +144,10 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
     
     # Use the JWT token to get user info 
     try:
-        # Authenticate client with user token to bypass RLS restrictions if Anon key is used
-        supabase = get_authenticated_supabase_client(token)
-        user_response = supabase.auth.get_user(token)
+        # Use standard client for auth check to avoid double-header issues
+        # get_authenticated_supabase_client adds "Authorization" header, and get_user(token) adds it again
+        public_supabase = get_supabase_client()
+        user_response = public_supabase.auth.get_user(token)
         
         if user_response.user is None:
             logger.error(f"Supabase returned no user for token! Response: {user_response}")
@@ -171,7 +172,9 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
             
         # Check if profile exists using authenticated client
         try:
-            profile_response = supabase.table("investor_profiles").select("id").eq("user_id", user.id).limit(1).execute()
+            # Must use authenticated client to pass RLS for DB queries
+            auth_supabase = get_authenticated_supabase_client(token)
+            profile_response = auth_supabase.table("investor_profiles").select("id").eq("user_id", user.id).limit(1).execute()
             has_profile = bool(profile_response.data)
         except Exception as e:
             # If 204 or other error, assume no profile
