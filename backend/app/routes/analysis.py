@@ -1,22 +1,22 @@
 """
-Analysis Routes
+Analysis Routes (In-Memory Version)
 """
 import logging
 import io
-import logging
-import io
+import uuid
+from datetime import datetime
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
 from app.models import DiligenceReportResponse
-from app.database import get_supabase_client
 from app.services.analysis_service import analyze_deck
+from app.routes.profiles import get_current_profile
 from pypdf import PdfReader
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# correct way to define hardcoded user id
-HARDCODED_USER_ID = "00000000-0000-0000-0000-000000000000"
+# In-memory storage for reports
+REPORTS_DB = []
 
 @router.post("/", response_model=DiligenceReportResponse)
 async def analyze_pitch_deck(
@@ -30,29 +30,10 @@ async def analyze_pitch_deck(
     """
     Analyze a pitch deck (PDF upload or raw text) against the user's thesis.
     """
-    user_id = HARDCODED_USER_ID
     
-    # Use standard client
-    supabase = get_supabase_client()
-    
-    # 1. Fetch User Thesis
-    try:
-        profile_response = supabase.table("investor_profiles").select("*").eq("user_id", user_id).maybe_single().execute()
-        if not profile_response.data:
-            # If no profile, we can't analyze against a thesis.
-            # Maybe return a generic error or allow analysis without thesis?
-            # For now, keep the restriction but message implies setup needed.
-            raise HTTPException(status_code=400, detail="Please complete your Investor Profile (Thesis) before analyzing deals.")
-        thesis_data = profile_response.data
-    except HTTPException:
-        raise
-    except Exception as e:
-        # Check for Postgrest 204 (No Content) error
-        error_str = str(e)
-        if "204" in error_str and "Missing response" in error_str:
-             raise HTTPException(status_code=400, detail="Please complete your Investor Profile (Thesis) before analyzing deals.")
-
-        logger.error(f"Error fetching investor profile: {e}")
+    # 1. Fetch User Thesis from in-memory profile
+    thesis_data = get_current_profile()
+    if not thesis_data:
         raise HTTPException(status_code=400, detail="Please complete your Investor Profile (Thesis) before analyzing deals.")
     
     # 2. Extract Content
@@ -102,9 +83,11 @@ async def analyze_pitch_deck(
     try:
         analysis_result = await analyze_deck(deck_text, thesis_data, company_metadata)
         
-        # 4. Save Record
+        # 5. Save Record
         record = {
-            "user_id": user_id,
+            "id": str(uuid.uuid4()),
+            "created_at": datetime.now().isoformat(),
+            "user_id": "guest-user",
             "deck_filename": filename,
             "decision": analysis_result.get("decision", "CAUTION"),
             "score": analysis_result.get("score", 0),
@@ -114,12 +97,9 @@ async def analyze_pitch_deck(
             "analysis_json": analysis_result
         }
         
-        response = supabase.table("diligence_reports").insert(record).select().execute()
+        REPORTS_DB.insert(0, record) # Add to beginning of list
         
-        if not response.data:
-             raise HTTPException(status_code=500, detail="Failed to save analysis record")
-             
-        return response.data[0]
+        return record
         
     except Exception as e:
         logger.error(f"Analysis process failed: {e}")
@@ -128,10 +108,4 @@ async def analyze_pitch_deck(
     
 @router.get("/", response_model=list[DiligenceReportResponse])
 async def get_my_reports():
-    user_id = HARDCODED_USER_ID
-    
-    # Use standard client
-    supabase = get_supabase_client()
-    
-    response = supabase.table("diligence_reports").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
-    return response.data
+    return REPORTS_DB

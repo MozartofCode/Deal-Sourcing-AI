@@ -81,21 +81,9 @@ app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
 # Health Check
 @app.get("/health")
 async def health_check():
-    """Health check endpoint with database connection test"""
-    try:
-        from app.database import get_supabase_client
-        supabase = get_supabase_client()
-        supabase.table("users").select("id").limit(1).execute()
-        return {
-            "status": "healthy",
-            "message": "API is running (Investor Pivot)",
-            "database": "connected"
-        }
-    except Exception as e:
-        logger.error(f"Health check failed: {str(e)}")
-        return {
-            "status": "degraded",
-            "message": "API is running but database connection failed",
-            "database": "disconnected",
-            "error": str(e)
-        }
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "message": "API is running (No Database Mode)",
+        "database": "disabled"
+    }
