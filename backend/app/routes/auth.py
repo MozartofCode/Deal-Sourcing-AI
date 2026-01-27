@@ -102,12 +102,12 @@ async def login(user_data: UserLogin):
     from app.database import get_authenticated_supabase_client
     try:
         supabase_auth = get_authenticated_supabase_client(access_token)
-        # Check if profile exists
-        profile_response = supabase_auth.table("investor_profiles").select("id").eq("user_id", user["id"]).limit(1).execute()
+        # Check if profile exists - use a list to avoid issues with .single() if it exists
+        profile_response = supabase_auth.table("investor_profiles").select("id").eq("user_id", user["id"]).execute()
         user["has_profile"] = bool(profile_response.data and len(profile_response.data) > 0)
     except Exception as e:
         detailed_error = format_error_message(e)
-        logger.warning(f"Note: Profile check returned no data or failed (might be new user): {detailed_error}")
+        logger.warning(f"Note: Profile check returned error (table might not exist or RLS issue): {detailed_error}")
         user["has_profile"] = False
     
     logger.info(f"Successful login for user: {user_data.email}")
@@ -126,7 +126,7 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
     from app.database import get_authenticated_supabase_client, get_supabase_client
     from datetime import datetime
     
-    token = credentials.credentials
+    token = credentials.credentials.strip()
     payload = decode_access_token(token)
     
     if payload is None:
@@ -144,20 +144,26 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
     
     # Use the JWT token to get user info 
     try:
-        # Use standard client for auth check to avoid double-header issues
-        # get_authenticated_supabase_client adds "Authorization" header, and get_user(token) adds it again
-        public_supabase = get_supabase_client()
-        user_response = public_supabase.auth.get_user(token)
+        # Create a dedicated client for this request to ensure no header bleeding
+        from supabase import create_client
+        from app.database import SUPABASE_URL, SUPABASE_KEY
+        from supabase.lib.client_options import ClientOptions
         
-        if user_response.user is None:
+        # Set the token in the headers for this specific client
+        headers = {"Authorization": f"Bearer {token}"}
+        auth_client = create_client(SUPABASE_URL, SUPABASE_KEY, options=ClientOptions(headers=headers))
+        
+        # Call get_user without arguments - it will use the Authorization header from client options
+        user_response = auth_client.auth.get_user()
+        
+        if not user_response or not user_response.user:
             logger.error(f"Supabase returned no user for token! Response: {user_response}")
             raise HTTPException(
-                status_code=404,
-                detail="User not found"
+                status_code=401,
+                detail="User not found or token invalid"
             )
         
         user = user_response.user
-        # logger.info(f"Debug: Found user {user.id} email={user.email}")
         user_metadata = user.user_metadata or {}
         name = user_metadata.get("name") or user_metadata.get("full_name")
         
@@ -170,15 +176,12 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
         else:
             created_at = datetime.utcnow()
             
-        # Check if profile exists using authenticated client
+        # Check if profile exists using the same authenticated client
         try:
-            # Must use authenticated client to pass RLS for DB queries
-            auth_supabase = get_authenticated_supabase_client(token)
-            profile_response = auth_supabase.table("investor_profiles").select("id").eq("user_id", user.id).limit(1).execute()
+            profile_response = auth_client.table("investor_profiles").select("id").eq("user_id", user.id).execute()
             has_profile = bool(profile_response.data and len(profile_response.data) > 0)
         except Exception as e:
-            # If 204 or other error, assume no profile
-            logger.warning(f"Note: Profile check returned no data or failed (might be new user): {e}")
+            logger.warning(f"Note: Profile check failed in /me: {e}")
             has_profile = False
         
         return UserResponse(
@@ -192,9 +195,14 @@ async def get_current_user_info(credentials: HTTPAuthorizationCredentials = Depe
         raise
     except Exception as e:
         detailed_error = format_error_message(e)
+        # If the error is about social auth or signature, it's definitely a 401
+        if "signature" in detailed_error.lower() or "invalid jwt" in detailed_error.lower():
+             logger.warning(f"Authentication failed: {detailed_error}")
+             raise HTTPException(status_code=401, detail="Invalid session. Please log in again.")
+             
         logger.error(f"Error fetching user info: {detailed_error}", exc_info=True)
         raise HTTPException(
-            status_code=404,
-            detail=f"User not found: {detailed_error}"
+            status_code=401,
+            detail=f"Authentication failed: {detailed_error}"
         )
 
