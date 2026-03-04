@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "DealSourcer2 Frontend",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeArgs": [
+        "D:/Deal-Sourcing-AI/DealSourcer2/frontend/node_modules/next/dist/bin/next",
+        "dev",
+        "D:/Deal-Sourcing-AI/DealSourcer2/frontend",
+        "--port",
+        "3000"
+      ],
+      "port": 3000
+    }
+  ]
+}

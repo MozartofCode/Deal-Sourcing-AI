@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc --noEmit)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where npm)",
+      "Bash(npm run build)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill /F /PID 21136)",
+      "Bash(taskkill //F //PID 21136)"
+    ]
+  }
+}
