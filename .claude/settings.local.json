@@ -7,7 +7,8 @@
       "Bash(npm run build)",
       "Bash(netstat -ano)",
       "Bash(taskkill /F /PID 21136)",
-      "Bash(taskkill //F //PID 21136)"
+      "Bash(taskkill //F //PID 21136)",
+      "Bash(node node_modules/next/dist/bin/next build)"
     ]
   }
 }
