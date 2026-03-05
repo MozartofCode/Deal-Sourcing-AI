@@ -31,7 +31,7 @@ export function Nav({ activePath }: NavProps) {
           <a href="/pricing" className={`${linkClass("/pricing")} pl-10`}>
             Pricing
           </a>
-          <a href="/#demo" className={`${linkClass("/#demo")} pl-10`}>
+          <a href="/demo" className={`${linkClass("/demo")} pl-10`}>
             Demo
           </a>
           <a
