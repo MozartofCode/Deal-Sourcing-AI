@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { AresLogo } from "@/components/AresLogo";
+import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Footer";
 
 function BarChartIcon() {
   return (
@@ -67,32 +68,7 @@ export default function LandingPage() {
   return (
     <div className="relative bg-white overflow-x-hidden">
 
-      {/* ── Navigation ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-[81px] bg-white/80 backdrop-blur-[6px] border-b border-[#F3F4F6]">
-        <div className="flex items-center justify-between h-[80px] px-8 max-w-[1280px] mx-auto">
-          <AresLogo className="w-8 h-9" />
-          <div className="flex items-center">
-            <a href="#" className="text-sm font-medium tracking-[0.35px] text-black hover:text-gray-500 transition-colors">
-              Home
-            </a>
-            <a href="#features" className="text-sm font-medium tracking-[0.35px] text-black hover:text-gray-500 transition-colors pl-10">
-              Features
-            </a>
-            <a href="#pricing" className="text-sm font-medium tracking-[0.35px] text-black hover:text-gray-500 transition-colors pl-10">
-              Pricing
-            </a>
-            <a href="#demo" className="text-sm font-medium tracking-[0.35px] text-black hover:text-gray-500 transition-colors pl-10">
-              Demo
-            </a>
-            <a
-              href="/login"
-              className="ml-10 bg-black text-white px-6 py-[10px] text-sm font-medium tracking-[0.35px] hover:bg-neutral-800 transition-colors"
-            >
-              Log In
-            </a>
-          </div>
-        </div>
-      </nav>
+      <Nav activePath="/" />
 
       {/* ── Page sections ── */}
       <div className="flex flex-col gap-[200px] pb-20">
@@ -183,62 +159,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── Footer ── */}
-        <footer className="relative w-full bg-white h-[434px]">
-          {/* Logo — centered, slightly above the footer top */}
-          <div className="absolute left-1/2 -translate-x-1/2 -top-[29px]">
-            <AresLogo className="w-10 h-12" />
-          </div>
-
-          {/* Footer content row */}
-          <div className="absolute left-[48px] right-[48px] top-[200px] flex justify-center gap-16">
-
-            {/* Left: tagline */}
-            <div className="w-[456px] flex-shrink-0">
-              <p className="text-lg leading-[29px] text-[#666666] max-w-[384px]">
-                Built for the next generation of capital allocators. Precision intelligence for high-stakes decisions.
-              </p>
-            </div>
-
-            {/* Right: link columns */}
-            <div className="flex flex-1 gap-12">
-
-              {/* Platform */}
-              <div className="flex flex-col gap-8 flex-1">
-                <h4 className="text-sm font-bold tracking-[0.7px] uppercase text-black leading-5">
-                  Platform
-                </h4>
-                <ul className="flex flex-col gap-4">
-                  <li><a href="#" className="text-base text-[#666666] leading-6 hover:text-black transition-colors">Intelligence</a></li>
-                  <li><a href="#" className="text-base text-[#666666] leading-6 hover:text-black transition-colors">Benchmarks</a></li>
-                  <li><a href="#" className="text-base text-[#666666] leading-6 hover:text-black transition-colors">Reporting</a></li>
-                </ul>
-              </div>
-
-              {/* Company */}
-              <div className="flex flex-col gap-8 flex-1">
-                <h4 className="text-sm font-bold tracking-[0.7px] uppercase text-black leading-5">
-                  Company
-                </h4>
-                <ul className="flex flex-col gap-4">
-                  <li><a href="#" className="text-base text-[#666666] leading-6 hover:text-black transition-colors">About</a></li>
-                  <li><a href="#" className="text-base text-[#666666] leading-6 hover:text-black transition-colors">Contact</a></li>
-                </ul>
-              </div>
-
-              {/* Legal */}
-              <div className="flex flex-col gap-8 flex-1">
-                <h4 className="text-sm font-bold tracking-[0.7px] uppercase text-black leading-5">
-                  Legal
-                </h4>
-                <ul className="flex flex-col gap-4">
-                  <li><a href="#" className="text-base text-[#666666] leading-6 hover:text-black transition-colors">Privacy</a></li>
-                  <li><a href="#" className="text-base text-[#666666] leading-6 hover:text-black transition-colors">Terms</a></li>
-                </ul>
-              </div>
-
-            </div>
-          </div>
-        </footer>
+        <Footer />
 
       </div>
 
