@@ -7,12 +7,17 @@ interface NavProps {
 }
 
 export function Nav({ activePath }: NavProps) {
-  const linkClass = (path: string) => {
-    const base =
-      "text-sm tracking-[0.35px] text-black hover:text-gray-500 transition-colors";
-    const active = "font-bold";
-    const inactive = "font-medium";
-    return `${base} ${activePath === path ? active : inactive}`;
+  const linkClass = (path: string): string => {
+    const base = "text-sm uppercase tracking-[0.35px] text-black hover:text-gray-500 transition-colors";
+    if (activePath === path) {
+      // Features page uses underline active indicator
+      if (path === "/features") {
+        return `${base} font-medium pb-1 border-b-2 border-black`;
+      }
+      // All other pages use bold active indicator
+      return `${base} font-bold`;
+    }
+    return `${base} font-medium`;
   };
 
   return (
@@ -25,7 +30,7 @@ export function Nav({ activePath }: NavProps) {
           <a href="/" className={linkClass("/")}>
             Home
           </a>
-          <a href="/#features" className={`${linkClass("/#features")} pl-10`}>
+          <a href="/features" className={`${linkClass("/features")} pl-10`}>
             Features
           </a>
           <a href="/pricing" className={`${linkClass("/pricing")} pl-10`}>
