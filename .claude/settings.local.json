@@ -8,7 +8,9 @@
       "Bash(netstat -ano)",
       "Bash(taskkill /F /PID 21136)",
       "Bash(taskkill //F //PID 21136)",
-      "Bash(node node_modules/next/dist/bin/next build)"
+      "Bash(node node_modules/next/dist/bin/next build)",
+      "Bash(powershell -Command \"[System.Environment]::SetEnvironmentVariable\\(''CLAUDE_CODE_MAX_OUTPUT_TOKENS'', ''64000'', ''User''\\); Write-Host ''Set CLAUDE_CODE_MAX_OUTPUT_TOKENS=64000 for current user''\")",
+      "Bash(npx next build)"
     ]
   }
 }
